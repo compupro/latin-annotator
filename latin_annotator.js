@@ -48,16 +48,28 @@ class Word {
             var defElement = document.createElement("div");
             defElement.className = "definition";
             defElement.appendChild(document.createTextNode(entry.meaning));
+            defElement.appendChild(document.createElement("br"));
+            
 
             //start making the table here
-            /*var table = document.createElement('table');
-            var row = table.insertRow(0);
-            var cell = row.insertCell(0);
-            cell.appendChild(document.createTextNode("sadfasdfasdf"));*/
-            //stop making the table here
- 
+            for (const inflection of entry.inflections){
+                var table = document.createElement('table');
+                for (const property of inflection.keys()){
+                    var row = table.insertRow(-1);
+                    var cell = row.insertCell(0)
+                    cell.appendChild(document.createTextNode(property));
+                    
+                    cell = row.insertCell(1);
+                    cell.appendChild(document.createTextNode(inflection.get(property)));
+                }
+                defElement.appendChild(table);
+            }
+            
             definitionContainer.appendChild(defElement);
-            definitionContainer.appendChild(table);
+            /*var row = table.insertRow(0);
+            var cell = row.insertCell(0);
+            cell.appendChild(document.createTextNode("Property"));*/
+            //stop making the table here
         }
     }
  
