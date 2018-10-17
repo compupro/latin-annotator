@@ -83,10 +83,6 @@ class Word {
             }
             
             definitionContainer.appendChild(defElement);
-            /*var row = table.insertRow(0);
-            var cell = row.insertCell(0);
-            cell.appendChild(document.createTextNode("Property"));*/
-            //stop making the table here
         }
     }
  
