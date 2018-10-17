@@ -1,5 +1,22 @@
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
 
+const linguisticTerms = {
+    "pofs":"Part of Speech",
+    "decl":"Declension",
+    "case":"Case",
+    "num":"Number",
+    "gend":"Gender",
+    "comp":"Degree of Comparison",
+    "tense":"Tense",
+    "voice":"Voice",
+    "mood":"Mood",
+    "pers":"Person",
+    "sort":"Cardinality",
+    "term":"Term",
+    "var":"Variation",
+    "conj":"Conjugation"
+    };
+
 class Word {
 
     constructor(wordID, wordString, sentenceNumber){
@@ -102,7 +119,11 @@ class Word {
                     for (const infl of entry.getElementsByTagName("infl")){
                         var inflection = new Map;
                         for (const property of infl.children){
-                            inflection.set(property.tagName, property.textContent);
+                            if (linguisticTerms[property.tagName] != undefined){
+                                inflection.set(linguisticTerms[property.tagName], property.textContent)
+                            } else {
+                                inflection.set(property.tagName, property.textContent)
+                            }
                         }
                         convertedEntry.inflections.push(inflection);
                     }
