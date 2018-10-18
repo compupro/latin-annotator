@@ -5,14 +5,21 @@
 }
 
 .definition {
+    padding: 5px;
     margin-top: 10px;
     position: relative;
-    display: flex;
     border: 1px solid black;
+}
+
+.inflections {
+    display: flex;
+}
+
+.meaning {
+    display: flex;
 }
 
 table {
     border: 1px solid black;
-    float: left;
     margin-left: 5px;
 }

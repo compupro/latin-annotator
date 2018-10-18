@@ -13,7 +13,7 @@ const linguisticTerms = {
     "pers":"Person",
     "sort":"Cardinality",
     "term":"Term",
-    "var":"Variation",
+    "var":"Variant",
     "conj":"Conjugation"
     };
 
@@ -22,7 +22,7 @@ class Word {
     constructor(wordID, wordString, sentenceNumber){
         this.wordID = wordID;
         this.wordString = wordString;
-        this.wordNoPunctuation = wordString.replace(/\W+/g, '');
+        this.wordNoPunctuation = wordString.replace(/\W+/g, "");
         this.sentenceNumber = sentenceNumber;
         this.definition = null;
         this.definitionOrigin = null;
@@ -33,7 +33,7 @@ class Word {
         this.HTMLelement.id = this.wordID;
 
         var self = this;
-        this.HTMLelement.addEventListener('click', function(){
+        this.HTMLelement.addEventListener("click", function(){
             self.clicked();
         });
 
@@ -64,13 +64,16 @@ class Word {
         for (const entry of this.definition.entries){
             var defElement = document.createElement("div");
             defElement.className = "definition";
-            defElement.appendChild(document.createTextNode(entry.meaning));
-            defElement.appendChild(document.createElement("br"));
+            var meaningElement = document.createElement("p");
+            meaningElement.className = "meaning";
+            meaningElement.appendChild(document.createTextNode(entry.meaning));
+            defElement.appendChild(meaningElement);
             
-
+            var inflectionContainer = document.createElement("div");
+            inflectionContainer.className = "inflections";
             //start making the table here
             for (const inflection of entry.inflections){
-                var table = document.createElement('table');
+                var table = document.createElement("table");
                 for (const property of inflection.keys()){
                     var row = table.insertRow(-1);
                     var cell = row.insertCell(0)
@@ -79,16 +82,16 @@ class Word {
                     cell = row.insertCell(1);
                     cell.appendChild(document.createTextNode(inflection.get(property)));
                 }
-                defElement.appendChild(table);
+                inflectionContainer.appendChild(table);
             }
-            
+            defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
         }
     }
  
     getWordDefinitions(updateView){
         var x = new XMLHttpRequest();
-        x.open('GET', ALPHEIOS_PERL_URL+this.wordString, true);
+        x.open("GET", ALPHEIOS_PERL_URL+this.wordString, true);
  
         var self = this;
         x.onreadystatechange = function () {
@@ -141,7 +144,7 @@ class Passage {
     }
  
     createwords(rawText){
-        rawText = rawText.replace(/\r?\n|\r/g, ' \n ');
+        rawText = rawText.replace(/\r?\n|\r/g, " \n ");
         var words = new Map;
         var sentence = 0;
         for (const word of rawText.split(" ")){
@@ -170,5 +173,5 @@ class Definition {
 var currentPassage;
 
 function processInput(){
-    currentPassage = new Passage(document.getElementById('input').value);
+    currentPassage = new Passage(document.getElementById("input").value);
 }
