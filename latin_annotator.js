@@ -88,7 +88,8 @@ class Word {
     updateDefinitionView(){
         var definitionContainer = document.getElementById("definitionContainer");
         definitionContainer.innerHTML = "";
-        for (const entry of this.definition.entries){
+        for (var e = 0 ; e < this.definition.entries.length; e++){
+            var entry = this.definition.entries[e]
             var defElement = document.createElement("div");
             defElement.className = "definition";
             var meaningElement = document.createElement("p");
@@ -110,7 +111,17 @@ class Word {
                     cell = row.insertCell(1);
                     cell.appendChild(document.createTextNode(inflection.get(property)));
                 }
-                table.setAttribute("test", i);
+                table.setAttribute("entryNumber", e);
+                table.setAttribute("inflectionNumber", i);
+                
+                //only works is you don't click on things inside the table, just the table itself!
+                var self = this;
+                table.addEventListener("click", function(event){;
+                    var target = event.target;
+                    var entryNumber = target.getAttribute("entryNumber");
+                    var inflectionNumber = target.getAttribute("inflectionNumber");
+                    self.definition.selectedInflection = [entryNumber, inflectionNumber];
+                });
                 inflectionContainer.appendChild(table);
             }
             defElement.appendChild(inflectionContainer);
