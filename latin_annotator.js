@@ -17,6 +17,33 @@ const linguisticTerms = {
     "conj":"Conjugation"
     };
 
+class Passage {
+ 
+    constructor(rawText){
+        document.getElementById("wordElementContainer").innerHTML = "";
+        this.rawText = rawText;
+        this.assigningWordID = 0;
+        this.words = this.createwords(rawText);
+    }
+ 
+    createwords(rawText){
+        rawText = rawText.replace(/\r?\n|\r/g, " \n ");
+        var words = new Map;
+        var sentence = 0;
+        for (const word of rawText.split(" ")){
+            if (word != ""){
+                words.set(this.assigningWordID, new Word(this.assigningWordID, word, sentence));
+                this.assigningWordID++;
+            }
+
+            if (word.includes(".")){
+                sentence++;
+            }
+        }
+        return words;
+    }
+}    
+    
 class Word {
 
     constructor(wordID, wordString, sentenceNumber){
@@ -72,7 +99,8 @@ class Word {
             var inflectionContainer = document.createElement("div");
             inflectionContainer.className = "inflections";
             //start making the table here
-            for (const inflection of entry.inflections){
+            for (var i = 0; i < entry.inflections.length; i++){
+                var inflection = entry.inflections[i];
                 var table = document.createElement("table");
                 for (const property of inflection.keys()){
                     var row = table.insertRow(-1);
@@ -82,6 +110,7 @@ class Word {
                     cell = row.insertCell(1);
                     cell.appendChild(document.createTextNode(inflection.get(property)));
                 }
+                table.setAttribute("test", i);
                 inflectionContainer.appendChild(table);
             }
             defElement.appendChild(inflectionContainer);
@@ -134,38 +163,11 @@ class Word {
     }
 }
 
-class Passage {
- 
-    constructor(rawText){
-        document.getElementById("wordElementContainer").innerHTML = "";
-        this.rawText = rawText;
-        this.assigningWordID = 0;
-        this.words = this.createwords(rawText);
-    }
- 
-    createwords(rawText){
-        rawText = rawText.replace(/\r?\n|\r/g, " \n ");
-        var words = new Map;
-        var sentence = 0;
-        for (const word of rawText.split(" ")){
-            if (word != ""){
-                words.set(this.assigningWordID, new Word(this.assigningWordID, word, sentence));
-                this.assigningWordID++;
-            }
-
-            if (word.includes(".")){
-                sentence++;
-            }
-        }
-        return words;
-    }
-}
-
 class Definition {
  
     constructor(origin_url){
         this.origin = origin_url;
-        this.selectedDefinition = [0,0];
+        this.selectedInflection = [0,0]; //first entry #, then inflection #
         this.entries = [];
     }
 }
