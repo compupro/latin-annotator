@@ -105,19 +105,28 @@ class Word {
                 var table = document.createElement("table");
                 for (const property of inflection.keys()){
                     var row = table.insertRow(-1);
+                    row.setAttribute("entryNumber", e);
+                    row.setAttribute("inflectionNumber", i);
                     var cell = row.insertCell(0)
+                    cell.setAttribute("entryNumber", e);
+                    cell.setAttribute("inflectionNumber", i);
                     cell.appendChild(document.createTextNode(property));
                     
                     cell = row.insertCell(1);
+                    cell.setAttribute("entryNumber", e);
+                    cell.setAttribute("inflectionNumber", i);
                     cell.appendChild(document.createTextNode(inflection.get(property)));
                 }
+                var tbody = table.children[0];
+                tbody.setAttribute("entryNumber", e);
+                tbody.setAttribute("inflectionNumber", i);
+                
                 table.setAttribute("entryNumber", e);
                 table.setAttribute("inflectionNumber", i);
                 
-                //only works is you don't click on things inside the table, just the table itself!
                 var self = this;
-                table.addEventListener("click", function(event){;
-                    var target = event.target;
+                table.addEventListener("click", function(event){
+                    var target = event.target.tagName.toLowerCase == "tbody" ? event.target.parentElement: event.target;
                     var entryNumber = target.getAttribute("entryNumber");
                     var inflectionNumber = target.getAttribute("inflectionNumber");
                     self.definition.selectedInflection = [entryNumber, inflectionNumber];
