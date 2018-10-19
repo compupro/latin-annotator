@@ -162,7 +162,12 @@ class Word {
             case ALPHEIOS_PERL_URL:
                 var definition = new Definition(origin);
                 for (const entry of doc.getElementsByTagName("entry")){
-                    var convertedEntry = {meaning: entry.getElementsByTagName("mean")[0].textContent};
+                    try {
+                        var meaning = entry.getElementsByTagName("mean")[0].textContent;
+                    } catch (TypeError) {
+                        var meaning = "Unknown meaning!";
+                    }
+                    var convertedEntry = {meaning: meaning};
                     convertedEntry.inflections = [];
                     for (const infl of entry.getElementsByTagName("infl")){
                         var inflection = new Map;
