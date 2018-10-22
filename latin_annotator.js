@@ -39,8 +39,14 @@ class Passage {
         }
         return words;
     }
-}    
     
+    clearHighlights(){
+        for (const word of this.words.values()){
+            word.HTMLelement.style.backgroundColor = "";
+        }
+    }
+}    
+
 class Word {
 
     constructor(wordID, wordString, sentenceNumber){
@@ -50,7 +56,7 @@ class Word {
         this.sentenceNumber = sentenceNumber;
         this.definition = null;
         this.definitionOrigin = null;
- 
+
         this.HTMLelement = document.createElement("span");
         this.HTMLelement.className = "wordElement";
         this.HTMLelement.innerHTML = (wordString == "\n") ? "<br />" : wordString;
@@ -67,12 +73,15 @@ class Word {
     }
  
     clicked(){
+        currentPassage.clearHighlights();
+        this.HTMLelement.style.backgroundColor = "#acff68";
+
         if (this.definition != null){
             this.updateDefinitionView();
         } else {
             this.getWordDefinitions(true);
         }
- 
+
         for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
             var wordIDCompared = Array.from(currentPassage.words.keys())[wordIndex];
             var wordObjCompared = currentPassage.words.get(wordIDCompared);
@@ -93,7 +102,7 @@ class Word {
             meaningElement.className = "meaning";
             meaningElement.appendChild(document.createTextNode(entry.meaning));
             defElement.appendChild(meaningElement);
-            
+
             var inflectionContainer = document.createElement("div");
             inflectionContainer.className = "inflections";
             //start making the table here
@@ -108,7 +117,7 @@ class Word {
                     cell.setAttribute("entryNumber", e);
                     cell.setAttribute("inflectionNumber", i);
                     cell.appendChild(document.createTextNode(property));
-                    
+
                     cell = row.insertCell(1);
                     cell.setAttribute("entryNumber", e);
                     cell.setAttribute("inflectionNumber", i);
@@ -117,10 +126,10 @@ class Word {
                 var tbody = table.children[0];
                 tbody.setAttribute("entryNumber", e);
                 tbody.setAttribute("inflectionNumber", i);
-                
+
                 table.setAttribute("entryNumber", e);
                 table.setAttribute("inflectionNumber", i);
-                
+
                 var self = this;
                 table.addEventListener("click", function(event){
                     var target = event.target.tagName.toLowerCase == "tbody" ? event.target.parentElement: event.target;
@@ -138,7 +147,7 @@ class Word {
     getWordDefinitions(updateView){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordString, true);
- 
+
         var self = this;
         x.onreadystatechange = function () {
             if (x.readyState == 4 && x.status == 201) {
