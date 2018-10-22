@@ -3,18 +3,15 @@ const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
 const linguisticTerms = {
     "pofs":"Part of Speech",
     "decl":"Declension",
-    "case":"Case",
     "num":"Number",
     "gend":"Gender",
     "comp":"Degree of Comparison",
-    "tense":"Tense",
     "voice":"Voice",
-    "mood":"Mood",
     "pers":"Person",
     "sort":"Cardinality",
-    "term":"Term",
     "var":"Variant",
-    "conj":"Conjugation"
+    "conj":"Conjugation",
+    "9th":"Irregular"
     };
 
 class Passage {
@@ -169,14 +166,14 @@ class Word {
                     }
                     var convertedEntry = {meaning: meaning};
                     convertedEntry.inflections = [];
+                    var capitalize = function(s){return s[0].toUpperCase() + s.slice(1);}
                     for (const infl of entry.getElementsByTagName("infl")){
                         var inflection = new Map;
                         for (const property of infl.children){
-                            if (linguisticTerms[property.tagName] != undefined){
-                                inflection.set(linguisticTerms[property.tagName], property.textContent)
-                            } else {
-                                inflection.set(property.tagName, property.textContent)
-                            }
+                            inflection.set(
+                                linguisticTerms[property.tagName] != undefined ? linguisticTerms[property.tagName] : capitalize(property.tagName),
+                                linguisticTerms[property.textContent] != undefined ? linguisticTerms[property.textContent] : capitalize(property.textContent)
+                            ); //Tries to replace terms according to  linguisticTerms if able, otherwise capitalizes the term from the XML and uses that.
                         }
                         convertedEntry.inflections.push(inflection);
                     }
