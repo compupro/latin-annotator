@@ -55,7 +55,6 @@ class Word {
         this.wordNoPunctuation = wordString.replace(/\W+/g, "");
         this.sentenceNumber = sentenceNumber;
         this.definition = null;
-        this.definitionOrigin = null;
 
         this.HTMLelement = document.createElement("span");
         this.HTMLelement.className = "wordElement";
@@ -69,7 +68,7 @@ class Word {
 
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
 
-        this.agreementList = [2, 4]; //TEMPORARY?
+        this.agreementList = null; //TEMPORARY?
     }
  
     clicked(){
@@ -81,14 +80,27 @@ class Word {
         } else {
             this.getWordDefinitions(true);
         }
-
+        
         for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
+            var wordID = Array.from(currentPassage.words.keys())[wordIndex];
+            var wordObj = currentPassage.words.get(wordID);
+            if (wordObj.sentence == this.sentence){
+                if (wordObj.definition == null){
+                    wordObj.getWordDefinitions(false);
+                }
+                if (this.agreesWith(wordObj.getSelectedInfl())){
+                    console.log(wordObj.wordString + " agrees!");
+                }
+            }
+        }
+        
+        /*for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
             var wordIDCompared = Array.from(currentPassage.words.keys())[wordIndex];
             var wordObjCompared = currentPassage.words.get(wordIDCompared);
             if (wordObjCompared.agreementList.includes(this.wordID)){
                 //DO THINGS THAT HAPPEN WHEN A WORD AGREES WITH THE CURRENT WORD
             }
-        }
+        }*/
     }
  
     updateDefinitionView(){
@@ -191,6 +203,22 @@ class Word {
                 this.definition = definition;
                 break;
         }
+    }
+    
+    agreesWith(wordInfl){
+        switch (this.definition.getSelectedInfl().get("Part of Speech")){
+            case "Noun":
+                if (wordInfl.get("Part of Speech") == "Adjective"){
+                    
+                }
+                break;
+        }
+    }
+    
+    getSelectedInfl(){
+        var entry = this.definition.entries[this.definition.selectedInflection[0]];
+        var infl = entry.inflections.get(this.deinition.selectedInflection[1]);
+        return infl;
     }
 }
 
