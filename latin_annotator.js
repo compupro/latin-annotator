@@ -11,7 +11,8 @@ const linguisticTerms = {
     "sort":"Cardinality",
     "var":"Variant",
     "conj":"Conjugation",
-    "9th":"Irregular"
+    "9th":"Irregular",
+    "common":"Masculine/Feminine"
     };
 
 class Passage {
@@ -88,7 +89,8 @@ class Word {
                 if (wordObj.definition == null){
                     wordObj.getWordDefinitions(false);
                 }
-                if (this.agreesWith(wordObj.getSelectedInfl())){
+                if (wordObj.agreesWith(this.getSelectedInfl())){
+                    wordObj.HTMLelement.style.backgroundColor = "#ddffc2";
                     console.log(wordObj.wordString + " agrees!");
                 }
             }
@@ -206,18 +208,28 @@ class Word {
     }
     
     agreesWith(wordInfl){
-        switch (this.definition.getSelectedInfl().get("Part of Speech")){
+        var myInfl = this.getSelectedInfl();
+        switch (wordInfl.get("Part of Speech")){
             case "Noun":
-                if (wordInfl.get("Part of Speech") == "Adjective"){
-                    
+                if (myInfl.get("Part of Speech") == "Adjective" &&
+                    myInfl.get("Number") == wordInfl.get("Number") &&
+                    myInfl.get("Case") == wordInfl.get("Case") &&
+                    myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    return true;
+                }
+                if (myInfl.get("Part of Speech") == "Verb" &&
+                    myInfl.get("Number") == wordInfl.get("Number")){
+                    return true;
                 }
                 break;
         }
     }
     
     getSelectedInfl(){
-        var entry = this.definition.entries[this.definition.selectedInflection[0]];
-        var infl = entry.inflections.get(this.deinition.selectedInflection[1]);
+        var entryNumber = this.definition.selectedInflection[0];
+        var inflNumber = this.definition.selectedInflection[1];
+        var entry = this.definition.entries[entryNumber];
+        var infl = entry.inflections[inflNumber];
         return infl;
     }
 }
