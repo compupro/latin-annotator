@@ -17,14 +17,14 @@ const linguisticTerms = {
     };
 
 class Passage {
- 
+
     constructor(rawText){
         document.getElementById("wordElementContainer").innerHTML = "";
         this.rawText = rawText;
         this.assigningWordID = 0;
         this.words = this.createwords(rawText);
     }
- 
+
     createwords(rawText){
         rawText = rawText.replace(/\r?\n|\r/g, " \n ");
         var words = new Map;
@@ -41,13 +41,13 @@ class Passage {
         }
         return words;
     }
-    
+
     clearHighlights(){
         for (const word of this.words.values()){
             word.HTMLelement.style.backgroundColor = "";
         }
     }
-}    
+}
 
 class Word {
 
@@ -72,7 +72,7 @@ class Word {
 
         this.agreementList = null; //TEMPORARY?
     }
- 
+
     clicked(){
         currentPassage.clearHighlights();
         this.HTMLelement.style.backgroundColor = "#acff68";
@@ -84,7 +84,7 @@ class Word {
             this.getWordDefinitions(true, true, null);
         }
     }
- 
+
     updateDefinitionView(){
         var definitionContainer = document.getElementById("definitionContainer");
         definitionContainer.innerHTML = "";
@@ -137,7 +137,7 @@ class Word {
             definitionContainer.appendChild(defElement);
         }
     }
- 
+
     getWordDefinitions(updateView, checkAgree, otherWord){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordString, true);
@@ -149,7 +149,7 @@ class Word {
                 var parser = new DOMParser();
                 doc = parser.parseFromString(doc, "text/xml");
                 self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                if (updateView){ 
+                if (updateView){
                     self.updateDefinitionView();
                 }
                 if (checkAgree){
@@ -177,7 +177,7 @@ class Word {
             }
         }
     }
-    
+
     updateWordDefintion(origin, doc){
         switch (origin) {
             case ALPHEIOS_PERL_URL:
@@ -207,8 +207,13 @@ class Word {
                 break;
         }
     }
-    
+
     agreesWith(wordInfl){
+    /*Check this word against another word's inflection, wordInfl.
+
+    If the other word is a certain part of speech, it checks itself for if 
+    fulfills agreement conditions. If it agrees, it returns true. If any part 
+    of this fails, it returns false.*/
         var myInfl = this.getSelectedInfl();
         switch (wordInfl.get("Part of Speech")){
             case "Noun":
@@ -222,7 +227,10 @@ class Word {
                     myInfl.get("Number") == wordInfl.get("Number")){
                     return true;
                 }
+                return false;
                 break;
+            default:
+                return false;
         }
     }
 
@@ -230,7 +238,7 @@ class Word {
         this.HTMLelement.style.backgroundColor = "#ddffc2";
         console.log(this.wordString + " agrees!");
     }
-    
+
     getSelectedInfl(){
         var entryNumber = this.definition.selectedInflection[0];
         var inflNumber = this.definition.selectedInflection[1];
@@ -241,7 +249,7 @@ class Word {
 }
 
 class Definition {
- 
+
     constructor(origin_url){
         this.origin = origin_url;
         this.selectedInflection = [0,0]; //first entry #, then inflection #
