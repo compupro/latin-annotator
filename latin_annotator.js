@@ -12,7 +12,8 @@ const linguisticTerms = {
     "var":"Variant",
     "conj":"Conjugation",
     "9th":"Irregular",
-    "common":"Masculine/Feminine"
+    "common":"Masculine/Feminine",
+    "all":"Masculine/Feminine/Neuter"
     };
 
 class Passage {
@@ -79,30 +80,8 @@ class Word {
         if (this.definition != null){
             this.updateDefinitionView();
         } else {
-            this.getWordDefinitions(true);
+            this.getWordDefinitions(true, true, null);
         }
-        
-        for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
-            var wordID = Array.from(currentPassage.words.keys())[wordIndex];
-            var wordObj = currentPassage.words.get(wordID);
-            if (wordObj.sentence == this.sentence && wordID != this.wordID){
-                if (wordObj.definition == null){
-                    wordObj.getWordDefinitions(false);
-                }
-                if (wordObj.agreesWith(this.getSelectedInfl())){
-                    wordObj.HTMLelement.style.backgroundColor = "#ddffc2";
-                    console.log(wordObj.wordString + " agrees!");
-                }
-            }
-        }
-        
-        /*for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
-            var wordIDCompared = Array.from(currentPassage.words.keys())[wordIndex];
-            var wordObjCompared = currentPassage.words.get(wordIDCompared);
-            if (wordObjCompared.agreementList.includes(this.wordID)){
-                //DO THINGS THAT HAPPEN WHEN A WORD AGREES WITH THE CURRENT WORD
-            }
-        }*/
     }
  
     updateDefinitionView(){
@@ -158,7 +137,7 @@ class Word {
         }
     }
  
-    getWordDefinitions(updateView){
+    getWordDefinitions(updateView, checkAgree, otherWord){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordString, true);
 
@@ -169,14 +148,35 @@ class Word {
                 var parser = new DOMParser();
                 doc = parser.parseFromString(doc, "text/xml");
                 self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                if (updateView == true){ 
+                if (updateView){ 
                     self.updateDefinitionView();
+                }
+                if (checkAgree){
+                    self.checkAgree();
+                } else if (otherWord != null){
+                    if (self.agreesWith(otherWord)){
+                        self.agree();
+                    }
                 }
             }
         }
         x.send(null);
     }
 
+    checkAgree(){
+        for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
+            var wordID = Array.from(currentPassage.words.keys())[wordIndex];
+            var wordObj = currentPassage.words.get(wordID);
+            if (wordObj.sentence == this.sentence && wordID != this.wordID){
+                if (wordObj.definition == null){
+                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl());
+                } else if (wordObj.agreesWith(this.getSelectedInfl())){
+                    wordObj.agree();
+                }
+            }
+        }
+    }
+    
     updateWordDefintion(origin, doc){
         switch (origin) {
             case ALPHEIOS_PERL_URL:
@@ -223,6 +223,11 @@ class Word {
                 }
                 break;
         }
+    }
+
+    agree(){
+        this.HTMLelement.style.backgroundColor = "#ddffc2";
+        console.log(this.wordString + " agrees!");
     }
     
     getSelectedInfl(){
