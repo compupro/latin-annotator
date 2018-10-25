@@ -79,6 +79,7 @@ class Word {
 
         if (this.definition != null){
             this.updateDefinitionView();
+            this.checkAgree();
         } else {
             this.getWordDefinitions(true, true, null);
         }
