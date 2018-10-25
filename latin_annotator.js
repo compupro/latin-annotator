@@ -85,7 +85,7 @@ class Word {
         for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
             var wordID = Array.from(currentPassage.words.keys())[wordIndex];
             var wordObj = currentPassage.words.get(wordID);
-            if (wordObj.sentence == this.sentence){
+            if (wordObj.sentence == this.sentence && wordID != this.wordID){
                 if (wordObj.definition == null){
                     wordObj.getWordDefinitions(false);
                 }
