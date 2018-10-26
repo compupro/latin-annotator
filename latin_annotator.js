@@ -243,6 +243,22 @@ class Word {
                 }
                 return false;
                 break;
+            case "Verb":
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    isSame("Number") &&
+                    wordInfl.get("Case") == "Nominative"){
+                    return true;
+                }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    isSame("Number") &&
+                    wordInfl.get("Case") == "Nominative"){
+                    return true;
+                }
+                if (myInfl.get("Part of Speech") == "Adverb"){
+                    return true;
+                }
+                return false;
+                break;
             default:
                 return false;
         }
@@ -251,7 +267,6 @@ class Word {
 
     agree(){
         this.HTMLelement.style.backgroundColor = AGREE_COLOR;
-        console.log(this.wordString + " agrees!");
     }
 
     getSelectedInfl(){
