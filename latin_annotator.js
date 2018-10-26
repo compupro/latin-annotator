@@ -1,4 +1,7 @@
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
+const SELECTED_COLOR = "#acff68";
+const AGREE_COLOR = "#ddffc2";
+
 
 const linguisticTerms = {
     "pofs":"Part of Speech",
@@ -75,7 +78,7 @@ class Word {
 
     clicked(){
         currentPassage.clearHighlights();
-        this.HTMLelement.style.backgroundColor = "#acff68";
+        this.HTMLelement.style.backgroundColor = SELECTED_COLOR;
 
         if (this.definition != null){
             this.updateDefinitionView();
@@ -130,6 +133,9 @@ class Word {
                     var entryNumber = target.getAttribute("entryNumber");
                     var inflectionNumber = target.getAttribute("inflectionNumber");
                     self.definition.selectedInflection = [entryNumber, inflectionNumber];
+                    currentPassage.clearHighlights();
+                    self.HTMLelement.style.backgroundColor = SELECTED_COLOR;
+                    self.checkSentenceAgreement();
                 });
                 inflectionContainer.appendChild(table);
             }
@@ -244,7 +250,7 @@ class Word {
 
 
     agree(){
-        this.HTMLelement.style.backgroundColor = "#ddffc2";
+        this.HTMLelement.style.backgroundColor = AGREE_COLOR;
         console.log(this.wordString + " agrees!");
     }
 
