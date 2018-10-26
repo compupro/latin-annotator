@@ -215,16 +215,18 @@ class Word {
     fulfills agreement conditions. If it agrees, it returns true. If any part 
     of this fails, it returns false.*/
         var myInfl = this.getSelectedInfl();
+        var isSame = function(property){
+                return myInfl.get(property) == wordInfl.get(property);
+            };
         switch (wordInfl.get("Part of Speech")){
             case "Noun":
                 if (myInfl.get("Part of Speech") == "Adjective" &&
-                    myInfl.get("Number") == wordInfl.get("Number") &&
-                    myInfl.get("Case") == wordInfl.get("Case") &&
+                    isSame("Number") && isSame("Case") &&
                     myInfl.get("Gender").includes(wordInfl.get("Gender"))){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
-                    myInfl.get("Number") == wordInfl.get("Number")){
+                    isSame("Number")){
                     return true;
                 }
                 return false;
