@@ -226,6 +226,20 @@ class Word {
                 return myInfl.get(property) == wordInfl.get(property);
             };
         switch (wordInfl.get("Part of Speech")){
+            case "Adverb":
+                if (myInfl.get("Part of Speech") == "Verb"){
+                    return true;
+                }
+                return false;
+                break;
+            case "Adjective":
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    isSame("Number") && isSame("Case") &&
+                    wordInfl.get("Gender").includes(myInfl.get("Gender"))){
+                    return true;
+                }
+                return false;
+                break;
             case "Noun":
                 if (myInfl.get("Part of Speech") == "Adjective" &&
                     isSame("Number") && isSame("Case") &&
@@ -233,12 +247,17 @@ class Word {
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
-                    isSame("Number")){
+                    isSame("Number") &&
+                    wordInfl.get("Case") == "Nominative"){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Case") &&
                     myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    return true;
+                }
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    myInfl.get("Case") == "Genitive"){
                     return true;
                 }
                 return false;
