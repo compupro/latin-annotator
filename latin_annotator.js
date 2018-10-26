@@ -79,7 +79,7 @@ class Word {
 
         if (this.definition != null){
             this.updateDefinitionView();
-            this.checkAgree();
+            this.checkSentenceAgreement();
         } else {
             this.getWordDefinitions(true, true, null);
         }
@@ -138,7 +138,7 @@ class Word {
         }
     }
 
-    getWordDefinitions(updateView, checkAgree, otherWord){
+    getWordDefinitions(updateView, checkSentenceAgreement, otherWord){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordString, true);
 
@@ -152,8 +152,8 @@ class Word {
                 if (updateView){
                     self.updateDefinitionView();
                 }
-                if (checkAgree){
-                    self.checkAgree();
+                if (checkSentenceAgreement){
+                    self.checkSentenceAgreement();
                 } else if (otherWord != null){
                     if (self.agreesWith(otherWord)){
                         self.agree();
@@ -164,19 +164,6 @@ class Word {
         x.send(null);
     }
 
-    checkAgree(){
-        for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
-            var wordID = Array.from(currentPassage.words.keys())[wordIndex];
-            var wordObj = currentPassage.words.get(wordID);
-            if (wordObj.sentence == this.sentence && wordID != this.wordID){
-                if (wordObj.definition == null){
-                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl());
-                } else if (wordObj.agreesWith(this.getSelectedInfl())){
-                    wordObj.agree();
-                }
-            }
-        }
-    }
 
     updateWordDefintion(origin, doc){
         switch (origin) {
@@ -208,11 +195,25 @@ class Word {
         }
     }
 
+    checkSentenceAgreement(){
+        for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
+            var wordID = Array.from(currentPassage.words.keys())[wordIndex];
+            var wordObj = currentPassage.words.get(wordID);
+            if (wordObj.sentence == this.sentence && wordID != this.wordID){
+                if (wordObj.definition == null){
+                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl());
+                } else if (wordObj.agreesWith(this.getSelectedInfl())){
+                    wordObj.agree();
+                }
+            }
+        }
+    }
+
     agreesWith(wordInfl){
     /*Check this word against another word's inflection, wordInfl.
 
-    If the other word is a certain part of speech, it checks itself for if 
-    fulfills agreement conditions. If it agrees, it returns true. If any part 
+    If the other word is a certain part of speech, it checks itself for if
+    fulfills agreement conditions. If it agrees, it returns true. If any part
     of this fails, it returns false.*/
         var myInfl = this.getSelectedInfl();
         var isSame = function(property){
@@ -229,12 +230,18 @@ class Word {
                     isSame("Number")){
                     return true;
                 }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    isSame("Number") && isSame("Case") &&
+                    myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    return true;
+                }
                 return false;
                 break;
             default:
                 return false;
         }
     }
+
 
     agree(){
         this.HTMLelement.style.backgroundColor = "#ddffc2";
