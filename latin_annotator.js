@@ -261,13 +261,19 @@ class Word {
                     wordInfl.get("Case") == "Genitive")){
                     return true;
                 }
-                return false;
-                break;
-            /*case "Preposition":
-                if (myInfl.get("Part of Speech") == "Noun"){
+                if (myInfl.get("Part of Speech") == "Preposition" &&
+                    isSame("Case")){
                     return true;
                 }
-                break;*/
+                return false;
+                break;
+            case "Preposition":
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    isSame("Case")){
+                    return true;
+                }
+                return false;
+                break;
             case "Pronoun":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
@@ -279,6 +285,7 @@ class Word {
                     wordInfl.get("Case") == "Nominative"){
                     return true;
                 }
+                return false;
                 break;
             case "Verb":
                 if (myInfl.get("Part of Speech") == "Noun" &&
