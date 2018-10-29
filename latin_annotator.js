@@ -257,7 +257,8 @@ class Word {
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Noun" &&
-                    myInfl.get("Case") == "Genitive"){
+                    (myInfl.get("Case") == "Genitive" ||
+                    wordInfl.get("Case") == "Genitive")){
                     return true;
                 }
                 return false;
@@ -272,7 +273,7 @@ class Word {
             case "Verb":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") &&
-                    wordInfl.get("Case") == "Nominative"){
+                    myInfl.get("Case") == "Nominative"){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
