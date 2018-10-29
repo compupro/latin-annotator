@@ -262,6 +262,13 @@ class Word {
                 }
                 return false;
                 break;
+            case "Pronoun":
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    isSame("Number") && isSame("Case") &&
+                    wordInfl.get("Gender").includes(myInfl.get("Gender"))){
+                    return true;
+                }
+                break;
             case "Verb":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") &&
