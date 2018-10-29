@@ -263,10 +263,20 @@ class Word {
                 }
                 return false;
                 break;
+            /*case "Preposition":
+                if (myInfl.get("Part of Speech") == "Noun"){
+                    return true;
+                }
+                break;*/
             case "Pronoun":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     wordInfl.get("Gender").includes(myInfl.get("Gender"))){
+                    return true;
+                }
+                if (myInfl.get("Part of Speech") == "Verb" &&
+                    isSame("Number") &&
+                    wordInfl.get("Case") == "Nominative"){
                     return true;
                 }
                 break;
@@ -278,7 +288,7 @@ class Word {
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") &&
-                    wordInfl.get("Case") == "Nominative"){
+                    myInfl.get("Case") == "Nominative"){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Adverb"){
