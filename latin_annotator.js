@@ -14,6 +14,8 @@ const linguisticTerms = {
     "sort":"Cardinality",
     "var":"Variant",
     "conj":"Conjugation",
+    "6th":"Irregular",
+    "7th":"Irregular",
     "9th":"Irregular",
     "common":"Masculine/Feminine",
     "all":"Masculine/Feminine/Neuter"
