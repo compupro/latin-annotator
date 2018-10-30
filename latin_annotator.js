@@ -40,7 +40,7 @@ class Passage {
                 this.assigningWordID++;
             }
 
-            if (word.includes(".")){
+            if (word.includes(".") || word.includes("?") || word.includes("!")){
                 sentence++;
             }
         }
