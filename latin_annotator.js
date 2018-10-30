@@ -272,6 +272,10 @@ class Word {
                     isSame("Case")){
                     return true;
                 }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    isSame("Case")){
+                    return true;
+                }
                 return false;
                 break;
             case "Pronoun":
@@ -283,6 +287,10 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Verb" &&
                     isSame("Number") &&
                     wordInfl.get("Case") == "Nominative"){
+                    return true;
+                }
+                if (myInfl.get("Part of Speech") == "Preposition" &&
+                    isSame("Case")){
                     return true;
                 }
                 return false;
