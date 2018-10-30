@@ -56,11 +56,11 @@ class Passage {
 
 class Word {
 
-    constructor(wordID, wordString, sentenceNumber){
+    constructor(wordID, wordString, sentence){
         this.wordID = wordID;
         this.wordString = wordString;
         this.wordNoPunctuation = wordString.replace(/\W+/g, "");
-        this.sentenceNumber = sentenceNumber;
+        this.sentence = sentence;
         this.definition = null;
 
         this.HTMLelement = document.createElement("span");
