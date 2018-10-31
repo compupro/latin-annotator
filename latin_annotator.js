@@ -59,7 +59,7 @@ class Word {
     constructor(wordID, wordString, sentence){
         this.wordID = wordID;
         this.wordString = wordString;
-        this.wordNoPunctuation = wordString.replace(/\W+/g, "");
+        this.wordNoPunctuation = wordString.replace(/[^a-zA-Z0-9_ĀāĒēĪīŌōŪūĂăĔĕĬĭŎŏŬŭ]+/g, "");
         this.sentence = sentence;
         this.definition = null;
 
@@ -148,7 +148,7 @@ class Word {
 
     getWordDefinitions(updateView, checkSentenceAgreement, otherWord){
         var x = new XMLHttpRequest();
-        x.open("GET", ALPHEIOS_PERL_URL+this.wordString, true);
+        x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
 
         var self = this;
         x.onreadystatechange = function () {
