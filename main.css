@@ -4,6 +4,14 @@
     cursor: pointer;
 }
 
+.selected {
+    background-color: #acff68;
+}
+
+.agrees {
+    background-color: #ddffc2;
+}
+
 .definition {
     padding: 5px;
     margin-top: 10px;

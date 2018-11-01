@@ -49,7 +49,8 @@ class Passage {
 
     clearHighlights(){
         for (const word of this.words.values()){
-            word.HTMLelement.style.backgroundColor = "";
+            word.HTMLelement.classList.remove("selected");
+            word.HTMLelement.classList.remove("agrees");
         }
     }
 }
@@ -80,7 +81,7 @@ class Word {
 
     clicked(){
         currentPassage.clearHighlights();
-        this.HTMLelement.style.backgroundColor = SELECTED_COLOR;
+        this.HTMLelement.classList.add("selected");
 
         if (this.definition != null){
             this.updateDefinitionView();
@@ -136,7 +137,7 @@ class Word {
                     var inflectionNumber = target.getAttribute("inflectionNumber");
                     self.definition.selectedInflection = [entryNumber, inflectionNumber];
                     currentPassage.clearHighlights();
-                    self.HTMLelement.style.backgroundColor = SELECTED_COLOR;
+                    self.HTMLelement.classList.add("selected");
                     self.checkSentenceAgreement();
                 });
                 inflectionContainer.appendChild(table);
@@ -321,7 +322,7 @@ class Word {
 
 
     agree(){
-        this.HTMLelement.style.backgroundColor = AGREE_COLOR;
+        this.HTMLelement.classList.add("agrees");
     }
 
     getSelectedInfl(){
