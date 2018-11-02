@@ -141,18 +141,18 @@ class Word {
                     for (const table of self.definition.inflTables){
                         if(table.getAttribute("entryNumber") == self.definition.selectedEntry &&
                         table.getAttribute("inflectionNumber") == self.definition.selectedInfl){
-                            table.classList.add("selected");
+                            table.classList.add("currentInfl");
                         } else {
-                            table.classList.remove("selected");
+                            table.classList.remove("currentInfl");
                         }
                     }
                     
                     currentPassage.clearHighlights();
-                    self.HTMLelement.classList.add("selected");
+                    self.HTMLelement.classList.add("currentInfl");
                     self.checkSentenceAgreement();
                 });
                 if(e == this.definition.selectedEntry && i == this.definition.selectedInfl){
-                    table.classList.add("selected");
+                    table.classList.add("currentInfl");
                 }
                 inflectionContainer.appendChild(table);
                 this.definition.inflTables.push(table);
