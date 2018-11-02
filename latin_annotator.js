@@ -137,11 +137,25 @@ class Word {
                     var inflectionNumber = target.getAttribute("inflectionNumber");
                     self.definition.selectedEntry = entryNumber;
                     self.definition.selectedInfl = inflectionNumber;
+                    
+                    for (const table of self.definition.inflTables){
+                        if(table.getAttribute("entryNumber") == self.definition.selectedEntry &&
+                        table.getAttribute("inflectionNumber") == self.definition.selectedInfl){
+                            table.classList.add("selected");
+                        } else {
+                            table.classList.remove("selected");
+                        }
+                    }
+                    
                     currentPassage.clearHighlights();
                     self.HTMLelement.classList.add("selected");
                     self.checkSentenceAgreement();
                 });
+                if(e == this.definition.selectedEntry && i == this.definition.selectedInfl){
+                    table.classList.add("selected");
+                }
                 inflectionContainer.appendChild(table);
+                this.definition.inflTables.push(table);
             }
             defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
@@ -341,6 +355,7 @@ class Definition {
         this.selectedEntry = 0;
         this.selectedInfl = 0;
         this.entries = [];
+        this.inflTables = [];
     }
 }
 
