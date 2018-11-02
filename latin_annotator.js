@@ -106,29 +106,29 @@ class Word {
             var inflectionContainer = document.createElement("div");
             inflectionContainer.className = "inflections";
             //start making the table here
+            var setInflection = function(element){
+                element.setAttribute("entryNumber", e);
+                element.setAttribute("inflectionNumber", i);
+            };
             for (var i = 0; i < entry.inflections.length; i++){
                 var inflection = entry.inflections[i];
                 var table = document.createElement("table");
                 for (const property of inflection.keys()){
                     var row = table.insertRow(-1);
-                    row.setAttribute("entryNumber", e);
-                    row.setAttribute("inflectionNumber", i);
+                    setInflection(row);
                     var cell = row.insertCell(0)
-                    cell.setAttribute("entryNumber", e);
-                    cell.setAttribute("inflectionNumber", i);
+                    setInflection(cell);
                     cell.appendChild(document.createTextNode(property));
 
                     cell = row.insertCell(1);
-                    cell.setAttribute("entryNumber", e);
-                    cell.setAttribute("inflectionNumber", i);
+                    setInflection(cell);
                     cell.appendChild(document.createTextNode(inflection.get(property)));
                 }
                 var tbody = table.children[0];
-                tbody.setAttribute("entryNumber", e);
-                tbody.setAttribute("inflectionNumber", i);
+                setInflection(tbody);
 
-                table.setAttribute("entryNumber", e);
-                table.setAttribute("inflectionNumber", i);
+                setInflection(table);
+                //table.id = "inflTable " + e + " " + i;
 
                 var self = this;
                 table.addEventListener("click", function(event){
@@ -172,7 +172,6 @@ class Word {
         }
         x.send(null);
     }
-
 
     updateWordDefintion(origin, doc){
         switch (origin) {
