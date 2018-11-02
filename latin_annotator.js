@@ -128,14 +128,15 @@ class Word {
                 setInflection(tbody);
 
                 setInflection(table);
-                //table.id = "inflTable " + e + " " + i;
+                table.id = "inflTable " + e + " " + i;
 
                 var self = this;
                 table.addEventListener("click", function(event){
                     var target = event.target.tagName.toLowerCase == "tbody" ? event.target.parentElement: event.target;
                     var entryNumber = target.getAttribute("entryNumber");
                     var inflectionNumber = target.getAttribute("inflectionNumber");
-                    self.definition.selectedInflection = [entryNumber, inflectionNumber];
+                    self.definition.selectedEntry = entryNumber;
+                    self.definition.selectedInfl = inflectionNumber;
                     currentPassage.clearHighlights();
                     self.HTMLelement.classList.add("selected");
                     self.checkSentenceAgreement();
@@ -325,8 +326,8 @@ class Word {
     }
 
     getSelectedInfl(){
-        var entryNumber = this.definition.selectedInflection[0];
-        var inflNumber = this.definition.selectedInflection[1];
+        var entryNumber = this.definition.selectedEntry;
+        var inflNumber = this.definition.selectedInfl;
         var entry = this.definition.entries[entryNumber];
         var infl = entry.inflections[inflNumber];
         return infl;
@@ -337,7 +338,8 @@ class Definition {
 
     constructor(origin_url){
         this.origin = origin_url;
-        this.selectedInflection = [0,0]; //first entry #, then inflection #
+        this.selectedEntry = 0;
+        this.selectedInfl = 0;
         this.entries = [];
     }
 }
