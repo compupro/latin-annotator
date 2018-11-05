@@ -209,12 +209,25 @@ class Word {
                                 linguisticTerms[property.textContent] != undefined ? linguisticTerms[property.textContent] : capitalize(property.textContent)
                             ); //Tries to replace terms according to  linguisticTerms if able, otherwise capitalizes the term from the XML and uses that.
                         }
+                        if (inflection.get("Part of Speech") == "Pronoun"){
+                            inflection.set("Person", this.pronounPerson(meaning));
+                        }
                         convertedEntry.inflections.push(inflection);
                     }
                     definition.entries.push(convertedEntry);
                 }
                 this.definition = definition;
                 break;
+        }
+    }
+    
+    pronounPerson(meaning){
+        if (meaning == "I, me (PERS); myself (REFLEX);"){
+            return "1st";
+        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);"){
+            return "2nd";
+        } else {
+            return "3rd";
         }
     }
 
@@ -303,7 +316,7 @@ class Word {
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
-                    isSame("Number") &&
+                    isSame("Number") && isSame("Person") &&
                     wordInfl.get("Case") == "Nominative"){
                     return true;
                 }
@@ -320,7 +333,7 @@ class Word {
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
-                    isSame("Number") &&
+                    isSame("Number") && isSame("Person") &&
                     myInfl.get("Case") == "Nominative"){
                     return true;
                 }
@@ -334,7 +347,6 @@ class Word {
         }
     }
 
-
     agree(){
         this.HTMLelement.classList.add("agrees");
     }
@@ -346,6 +358,7 @@ class Word {
         var infl = entry.inflections[inflNumber];
         return infl;
     }
+
 }
 
 class Definition {
