@@ -1,6 +1,4 @@
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
-const SELECTED_COLOR = "#acff68";
-const AGREE_COLOR = "#ddffc2";
 
 
 const linguisticTerms = {
@@ -148,7 +146,7 @@ class Word {
                     }
                     
                     currentPassage.clearHighlights();
-                    self.HTMLelement.classList.add("currentInfl");
+                    self.HTMLelement.classList.add("selected");
                     self.checkSentenceAgreement();
                 });
                 if(e == this.definition.selectedEntry && i == this.definition.selectedInfl){
