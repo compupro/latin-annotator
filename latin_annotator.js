@@ -38,7 +38,7 @@ class Passage {
                 this.assigningWordID++;
             }
 
-            if (word.includes(".") || word.includes("?") || word.includes("!")){
+            if (/(\.|!|\?|:)/.test(word)){
                 sentence++;
             }
         }
