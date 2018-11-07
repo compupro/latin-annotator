@@ -29,7 +29,7 @@ class Passage {
     }
 
     createwords(rawText){
-        rawText = rawText.replace(/\r?\n|\r/g, " \n ");
+        rawText = rawText.replace(/\r?\n|\r/g, " \n "); //matches newlines
         var words = new Map;
         var sentence = 0;
         for (const word of rawText.split(" ")){
@@ -38,7 +38,7 @@ class Passage {
                 this.assigningWordID++;
             }
 
-            if (/(\.|!|\?|:)/.test(word)){
+            if (/(\.|!|\?|:)/.test(word)){ //matches .!?:
                 sentence++;
             }
         }
@@ -58,7 +58,7 @@ class Word {
     constructor(wordID, wordString, sentence){
         this.wordID = wordID;
         this.wordString = wordString;
-        this.wordNoPunctuation = wordString.replace(/[^a-zA-Z0-9_ĀāĒēĪīŌōŪūĂăĔĕĬĭŎŏŬŭ]+/g, "");
+        this.wordNoPunctuation = wordString.replace(/[^a-zA-Z0-9_ĀāĒēĪīŌōŪūĂăĔĕĬĭŎŏŬŭ]+/g, ""); //matches alphanumeric plus vowels with macron or breve
         this.sentence = sentence;
         this.definition = null;
 
