@@ -294,6 +294,11 @@ class Word {
                     isSame("Case")){
                     return true;
                 }
+                if (myInfl.get("Part of Speech") == "Verb participle" &&
+                    isSame("Number") && isSame("Case") &&
+                    myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    return true;
+                }
                 return false;
                 break;
             case "Preposition":
@@ -336,6 +341,14 @@ class Word {
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Adverb"){
+                    return true;
+                }
+                return false;
+                break;
+            case "Verb participle":
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    isSame("Number") && isSame("Case") &&
+                    wordInfl.get("Gender").includes(myInfl.get("Gender"))){
                     return true;
                 }
                 return false;
