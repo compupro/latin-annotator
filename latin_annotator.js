@@ -285,6 +285,7 @@ class Word {
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
+                    myInfl.get("Person") == "3rd" &&
                     isSame("Number") &&
                     wordInfl.get("Case") == "Nominative"){
                     return true;
@@ -340,6 +341,7 @@ class Word {
                 break;
             case "Verb":
                 if (myInfl.get("Part of Speech") == "Noun" &&
+                    wordInfl.get("Person") == "3rd" &&
                     isSame("Number") &&
                     myInfl.get("Case") == "Nominative"){
                     return true;
