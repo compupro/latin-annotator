@@ -135,7 +135,7 @@ class Word {
                     var inflectionNumber = target.getAttribute("inflectionNumber");
                     self.definition.selectedEntry = entryNumber;
                     self.definition.selectedInfl = inflectionNumber;
-                    
+
                     for (const table of self.definition.inflTables){
                         if(table.getAttribute("entryNumber") == self.definition.selectedEntry &&
                         table.getAttribute("inflectionNumber") == self.definition.selectedInfl){
@@ -144,7 +144,7 @@ class Word {
                             table.classList.remove("currentInfl");
                         }
                     }
-                    
+
                     currentPassage.clearHighlights();
                     self.HTMLelement.classList.add("selected");
                     self.checkSentenceAgreement();
@@ -158,6 +158,15 @@ class Word {
             defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
         }
+        this.scrollToSelectedDef();
+    }
+
+    scrollToSelectedDef(){
+        var entry = this.definition.selectedEntry;
+        var infl = this.definition.selectedInfl;
+        var table = document.getElementById("inflTable " + entry + " " + infl);
+        var defDiv = table.parentElement.parentElement;
+        defDiv.scrollIntoView();
     }
 
     getWordDefinitions(updateView, checkSentenceAgreement, otherWord){
@@ -218,7 +227,7 @@ class Word {
                 break;
         }
     }
-    
+
     pronounPerson(meaning){
         if (meaning == "I, me (PERS); myself (REFLEX);"){
             return "1st";
