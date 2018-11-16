@@ -120,7 +120,9 @@ class Word {
 
                     cell = row.insertCell(1);
                     setInflection(cell);
-                    cell.appendChild(document.createTextNode(inflection.get(property)));
+                    var propertyValue = inflection.get(property)
+                    propertyValue = propertyValue.replace("/", "/\u200b") //add zero-width spaces to slashes on the display text but not the original property
+                    cell.appendChild(document.createTextNode(propertyValue));
                 }
                 var tbody = table.children[0];
                 setInflection(tbody);
