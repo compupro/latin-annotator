@@ -273,7 +273,7 @@ class Word {
             case "Adjective":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
-                    wordInfl.get("Gender").includes(myInfl.get("Gender"))){
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return true;
                 }
                 return false;
@@ -281,7 +281,7 @@ class Word {
             case "Noun":
                 if (myInfl.get("Part of Speech") == "Adjective" &&
                     isSame("Number") && isSame("Case") &&
-                    myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
@@ -292,7 +292,7 @@ class Word {
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Case") &&
-                    myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Noun" &&
@@ -306,7 +306,7 @@ class Word {
                 }
                 if (myInfl.get("Part of Speech") == "Verb participle" &&
                     isSame("Number") && isSame("Case") &&
-                    myInfl.get("Gender").includes(wordInfl.get("Gender"))){
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return true;
                 }
                 return false;
@@ -325,7 +325,7 @@ class Word {
             case "Pronoun":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
-                    wordInfl.get("Gender").includes(myInfl.get("Gender"))){
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return true;
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
@@ -358,7 +358,7 @@ class Word {
             case "Verb participle":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
-                    wordInfl.get("Gender").includes(myInfl.get("Gender"))){
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return true;
                 }
                 return false;
@@ -368,6 +368,13 @@ class Word {
         }
     }
 
+    matchGender(gender1, gender2){
+        for (const gender of gender1.split("/")){
+            return gender2.includes(gender);
+        }
+        return false;
+    }
+    
     agree(){
         this.HTMLelement.classList.add("agrees");
     }
