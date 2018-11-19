@@ -73,8 +73,6 @@ class Word {
         });
 
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
-
-        this.agreementList = null; //TEMPORARY?
     }
 
     clicked(){
