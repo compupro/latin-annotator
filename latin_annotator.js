@@ -198,7 +198,17 @@ class Word {
     updateWordDefintion(origin, doc){
         switch (origin) {
             case ALPHEIOS_PERL_URL:
+                //If the API responded with no entry
                 var definition = new Definition(origin);
+                if (doc.getElementsByTagName("entry").length == 0){
+                    var entry = {meaning: "Unknown meaning!"};
+                    var infl = new Map();
+                    infl.set("Error", "Word not recognized!");
+                    entry.inflections = [infl];
+                    definition.entries.push(entry);
+                }
+
+                //If there is an entry in the API response
                 for (const entry of doc.getElementsByTagName("entry")){
                     try {
                         var meaning = entry.getElementsByTagName("mean")[0].textContent;
@@ -374,7 +384,7 @@ class Word {
         }
         return false;
     }
-    
+
     agree(){
         this.HTMLelement.classList.add("agrees");
     }
