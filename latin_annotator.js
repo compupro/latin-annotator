@@ -1,6 +1,5 @@
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
 
-
 const linguisticTerms = {
     "pofs":"Part of Speech",
     "decl":"Declension",
