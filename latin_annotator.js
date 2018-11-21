@@ -413,4 +413,5 @@ var currentPassage;
 
 function processInput(){
     currentPassage = new Passage(document.getElementById("input").value);
+    document.getElementById("definitionContainer").innerHTML = "";
 }
