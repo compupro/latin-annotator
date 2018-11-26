@@ -1,5 +1,7 @@
+//Put API endpoint URLs here as constants
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
 
+//Referenced when api ling terms are replaced by human readable ones
 const linguisticTerms = {
     "pofs":"Part of Speech",
     "decl":"Declension",
@@ -18,6 +20,9 @@ const linguisticTerms = {
     "all":"Masculine/Feminine/Neuter"
     };
 
+/*The Passage class creates a passage from raw text when created.
+It contains all word objects of the passage.
+*/
 class Passage {
 
     constructor(rawText){
@@ -26,7 +31,10 @@ class Passage {
         this.assigningWordID = 0;
         this.words = this.createwords(rawText);
     }
-
+    
+    /*Generates Words in the passage by stripping punctuation and running it through the Word's constructor
+    
+    These Words are stored in this.words, which is a map of words referenced by a numerical ID. These are NOT ordered, since you're supposed to be able to insert words in arbitrary positions.*/
     createwords(rawText){
         rawText = rawText.replace(/\r?\n|\r/g, " \n "); //matches newlines
         var words = new Map;
@@ -44,6 +52,7 @@ class Passage {
         return words;
     }
 
+    //Gets every word in the passage and clears their element's highlights
     clearHighlights(){
         for (const word of this.words.values()){
             word.HTMLelement.classList.remove("selected");
@@ -61,6 +70,8 @@ class Word {
         this.sentence = sentence;
         this.definition = null;
 
+        /*Make the clickable element to be put in wordElementContainer
+        This does NOT include the definition elements nor the inflection tables!*/
         this.HTMLelement = document.createElement("span");
         this.HTMLelement.className = "wordElement";
         this.HTMLelement.innerHTML = (wordString == "\n") ? "<br />" : wordString;
@@ -74,11 +85,12 @@ class Word {
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
     }
 
+    //When the word's wordElement gets clicked, this runs.
     clicked(){
         currentPassage.clearHighlights();
         this.HTMLelement.classList.add("selected");
 
-        if (this.definition != null){
+        if (this.definition != null){ //If there is a definition
             this.updateDefinitionView();
             this.checkSentenceAgreement();
         } else {
@@ -91,15 +103,20 @@ class Word {
         definitionContainer.innerHTML = "";
         for (var e = 0 ; e < this.definition.entries.length; e++){
             var entry = this.definition.entries[e]
+            
+            //start making the definition box where all the inflections will go inside
             var defElement = document.createElement("div");
             defElement.className = "definition";
+            //the meaning of the word is put in the definition box
             var meaningElement = document.createElement("p");
             meaningElement.className = "meaning";
             meaningElement.appendChild(document.createTextNode(entry.meaning));
             defElement.appendChild(meaningElement);
 
+            //this div contains the tables, which goes inside the definition box
             var inflectionContainer = document.createElement("div");
             inflectionContainer.className = "inflections";
+
             //start making the table here
             var setInflection = function(element){
                 element.setAttribute("entryNumber", e);
