@@ -144,6 +144,8 @@ class Word {
                 setInflection(table);
                 table.id = "inflTable " + e + " " + i;
 
+                /*This part is still part of the table generation!
+                This handles for the inflection switching logic for the Definition it goes with*/
                 var self = this;
                 table.addEventListener("click", function(event){
                     var target = event.target.tagName.toLowerCase == "tbody" ? event.target.parentElement: event.target;
@@ -171,6 +173,7 @@ class Word {
                 inflectionContainer.appendChild(table);
                 this.definition.inflTables.push(table);
             }
+            //table making ends here
             defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
         }
@@ -185,6 +188,8 @@ class Word {
         defDiv.scrollIntoView();
     }
 
+    /*Gets word definitions as an XML document which is passed to updateWordDefinition()
+    Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.*/
     getWordDefinitions(updateView, checkSentenceAgreement, otherWord){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
@@ -210,7 +215,8 @@ class Word {
         }
         x.send(null);
     }
-
+    
+    /*Uses the XML parser with the XML document from the API to generate the array of entries.*/
     updateWordDefintion(origin, doc){
         switch (origin) {
             case ALPHEIOS_PERL_URL:
@@ -416,7 +422,10 @@ class Word {
 }
 
 class Definition {
-
+    
+    /*The most important part of Definition is that it contains all the possible dictionary entries and inflections for a word, stored in this.entries()
+    
+    The structure of this.entries is [{meaning="", inflections=[{"property":"value"}]}]*/
     constructor(origin_url){
         this.origin = origin_url;
         this.selectedEntry = 0;
