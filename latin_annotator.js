@@ -270,6 +270,8 @@ class Word {
         }
     }
 
+    /*Checks the word's agreement with every other word in the sentence.
+    Will fetch the definitions of those words if they haven't been fetched yet*/
     checkSentenceAgreement(){
         for (var wordIndex = 0; wordIndex < currentPassage.words.size; wordIndex++){
             var wordID = Array.from(currentPassage.words.keys())[wordIndex];
@@ -285,12 +287,12 @@ class Word {
         }
     }
 
-    agreesWith(wordInfl){
     /*Check this word against another word's inflection, wordInfl.
 
     If the other word is a certain part of speech, it checks itself for if
     fulfills agreement conditions. If it agrees, it returns true. If any part
     of this fails, it returns false.*/
+    agreesWith(wordInfl){
         var myInfl = this.getSelectedInfl();
         var isSame = function(property){
                 return myInfl.get(property) == wordInfl.get(property);
