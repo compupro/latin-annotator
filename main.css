@@ -53,8 +53,10 @@ table {
 
 #tooltip {
     position: absolute;
-    border: 1px solid black;
     background-color: white;
     z-index: 1;
-    width: 250;
+    bottom: 100%;
+    left: 50%;
+    padding: 5px;
+    box-shadow: 0 1px 1px 0 rgba(60,64,67,.08), 0 1px 3px 1px rgba(60,64,67,.16);
 }
