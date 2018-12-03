@@ -73,7 +73,7 @@ class Word {
         /*Make the clickable element to be put in wordElementContainer
         This does NOT include the definition elements nor the inflection tables!*/
         this.HTMLelement = document.createElement("span");
-        this.HTMLelement.className = "wordElement";
+        this.HTMLelement.className = (wordString == "\n") ? "passageLineBreak" : "wordElement";
         this.HTMLelement.innerHTML = (wordString == "\n") ? "<br />" : wordString;
         this.HTMLelement.id = this.wordID;
         
@@ -100,16 +100,19 @@ class Word {
     }
     
     showTooltip(){
+        this.hideTooltip();
         var tooltip = document.createElement("div");
         tooltip.id = "tooltip"; 
         var meaning = document.createTextNode(this.getSelectedEntry().meaning);
         tooltip.appendChild(meaning);
-        document.getElementById("wordElementContainer").appendChild(tooltip);
+        this.HTMLelement.appendChild(tooltip);
     }
     
     hideTooltip(){
-        var tooltip = document.getElementById("tooltip");
-        tooltip.remove();
+        if (document.getElementById("tooltip")){
+            var tooltip = document.getElementById("tooltip");
+            tooltip.remove();
+        }
     }
     
     //When the word's wordElement gets clicked, this runs.
