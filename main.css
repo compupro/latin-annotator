@@ -40,8 +40,10 @@ table {
 
 #definitionContainer {
     /background-color: white;
-    position: sticky;
+    position: fixed;
+    width: 99%; /*vertical scrollbar gets obscured when at 100%!?*/
     bottom: 0;
+    left: 0;
     height: 25%;
     overflow-y: auto;
     border: 1px solid black;
