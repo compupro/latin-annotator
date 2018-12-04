@@ -39,7 +39,7 @@ table {
 }
 
 #definitionContainer {
-    background-color: white;
+    /background-color: white;
     position: sticky;
     bottom: 0;
     height: 25%;
@@ -58,4 +58,5 @@ table {
     top: 100%;
     left: 50%;
     padding: 5px;
-    box-shadow: 0 1px 1px 0 rgba(60,64,67,.08), 0 1px 3px 1px rgba(60,64,67,.16);
+    box-shadow: 0 1px 3px 1px rgba(60,64,67,.16);
+    white-space: pre;

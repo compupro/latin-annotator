@@ -102,8 +102,9 @@ class Word {
     showTooltip(){
         this.hideTooltip();
         var tooltip = document.createElement("div");
-        tooltip.id = "tooltip"; 
-        var meaning = document.createTextNode(this.getSelectedEntry().meaning);
+        tooltip.id = "tooltip";
+        var wordMeaning = this.getSelectedEntry().meaning.replace(" ", "\u00A0");
+        var meaning = document.createTextNode(wordMeaning);
         tooltip.appendChild(meaning);
         this.HTMLelement.appendChild(tooltip);
     }
@@ -215,7 +216,7 @@ class Word {
         var infl = this.definition.selectedInfl;
         var table = document.getElementById("inflTable " + entry + " " + infl);
         var defDiv = table.parentElement.parentElement;
-        defDiv.scrollIntoView();
+        defDiv.parentElement.scrollTop = defDiv.offsetTop;
     }
 
     /*Gets word definitions as an XML document which is passed to updateWordDefinition()
