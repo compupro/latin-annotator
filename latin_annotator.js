@@ -174,6 +174,7 @@ class Word {
 
                 setInflection(table);
                 table.id = "inflTable " + e + " " + i;
+                table.classList.add("inflTable");
 
                 /*This part is still part of the table generation!
                 This handles for the inflection switching logic for the Definition it goes with*/
