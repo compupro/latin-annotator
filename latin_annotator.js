@@ -73,18 +73,49 @@ class Word {
         /*Make the clickable element to be put in wordElementContainer
         This does NOT include the definition elements nor the inflection tables!*/
         this.HTMLelement = document.createElement("span");
-        this.HTMLelement.className = "wordElement";
+        this.HTMLelement.className = (wordString == "\n") ? "passageLineBreak" : "wordElement";
         this.HTMLelement.innerHTML = (wordString == "\n") ? "<br />" : wordString;
         this.HTMLelement.id = this.wordID;
-
+        
         var self = this;
         this.HTMLelement.addEventListener("click", function(){
             self.clicked();
         });
+        this.HTMLelement.addEventListener("mouseover", function(){
+            self.mousedover();
+        });
+        this.HTMLelement.addEventListener("mouseout", function(){
+            self.hideTooltip();
+        });
 
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
     }
-
+    
+    mousedover(){
+        if (this.definition == null){
+            this.getWordDefinitions(false, false, null, true)
+        } else {
+            this.showTooltip();
+        }
+    }
+    
+    showTooltip(){
+        this.hideTooltip();
+        var tooltip = document.createElement("div");
+        tooltip.id = "tooltip";
+        var wordMeaning = this.getSelectedEntry().meaning.replace(" ", "\u00A0");
+        var meaning = document.createTextNode(wordMeaning);
+        tooltip.appendChild(meaning);
+        this.HTMLelement.appendChild(tooltip);
+    }
+    
+    hideTooltip(){
+        if (document.getElementById("tooltip")){
+            var tooltip = document.getElementById("tooltip");
+            tooltip.remove();
+        }
+    }
+    
     //When the word's wordElement gets clicked, this runs.
     clicked(){
         currentPassage.clearHighlights();
@@ -94,7 +125,7 @@ class Word {
             this.updateDefinitionView();
             this.checkSentenceAgreement();
         } else {
-            this.getWordDefinitions(true, true, null);
+            this.getWordDefinitions(true, true, null, false);
         }
     }
 
@@ -143,6 +174,7 @@ class Word {
 
                 setInflection(table);
                 table.id = "inflTable " + e + " " + i;
+                table.classList.add("inflTable");
 
                 /*This part is still part of the table generation!
                 This handles for the inflection switching logic for the Definition it goes with*/
@@ -185,12 +217,12 @@ class Word {
         var infl = this.definition.selectedInfl;
         var table = document.getElementById("inflTable " + entry + " " + infl);
         var defDiv = table.parentElement.parentElement;
-        defDiv.scrollIntoView();
+        defDiv.parentElement.scrollTop = defDiv.offsetTop;
     }
 
     /*Gets word definitions as an XML document which is passed to updateWordDefinition()
     Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.*/
-    getWordDefinitions(updateView, checkSentenceAgreement, otherWord){
+    getWordDefinitions(updateView, checkSentenceAgreement, otherWord, showTooltip){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
 
@@ -210,6 +242,9 @@ class Word {
                     if (self.agreesWith(otherWord)){
                         self.agree();
                     }
+                }
+                if (showTooltip){
+                    self.showTooltip();
                 }
             }
         }
@@ -279,7 +314,7 @@ class Word {
             if (wordObj.sentence == this.sentence && wordID != this.wordID &&
                 wordObj.wordString != "\n"){
                 if (wordObj.definition == null){
-                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl());
+                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl(), false);
                 } else if (wordObj.agreesWith(this.getSelectedInfl())){
                     wordObj.agree();
                 }
@@ -413,6 +448,12 @@ class Word {
         this.HTMLelement.classList.add("agrees");
     }
 
+    getSelectedEntry(){
+        var entryNumber = this.definition.selectedEntry;
+        var entry = this.definition.entries[entryNumber];
+        return entry;
+    }
+    
     getSelectedInfl(){
         var entryNumber = this.definition.selectedEntry;
         var inflNumber = this.definition.selectedInfl;
