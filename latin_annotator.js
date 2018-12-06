@@ -217,7 +217,7 @@ class Word {
         var infl = this.definition.selectedInfl;
         var table = document.getElementById("inflTable " + entry + " " + infl);
         var defDiv = table.parentElement.parentElement;
-        defDiv.parentElement.scrollTop = defDiv.offsetTop;
+        defDiv.parentElement.scrollTop = defDiv.offsetTop - 10;
     }
 
     /*Gets word definitions as an XML document which is passed to updateWordDefinition()
