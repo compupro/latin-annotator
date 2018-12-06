@@ -7,4 +7,3 @@ tu es.
 argentarius est.`;
 processInput();
 currentPassage.words.get(0).clicked();
-
