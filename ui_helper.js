@@ -20,7 +20,7 @@ function dragElement(elem) {
         pos1 = pos2 - e.clientY;
         pos2 = e.clientY;
         // set the element's new position:
-        elem.style.height = window.innerHeight - pos2 + "px";
+        elem.style.height = window.innerHeight - pos2 - 5 + "px";
     }
 
     function closeDragElement() {
