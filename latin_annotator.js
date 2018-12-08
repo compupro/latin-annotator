@@ -117,10 +117,12 @@ class Word {
         var meaning = document.createTextNode(wordMeaning);
         tooltip.appendChild(meaning);
         
-        var entry = this.definition.selectedEntry;
-        var infl = this.definition.selectedInfl;
-        var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
-        tooltip.appendChild(inflTable);
+        try {
+            var entry = this.definition.selectedEntry;
+            var infl = this.definition.selectedInfl;
+            var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
+            tooltip.appendChild(inflTable);
+        } catch (e) {};
         
         this.HTMLelement.appendChild(tooltip);
     }
