@@ -119,7 +119,7 @@ class Word {
         
         var entry = this.definition.selectedEntry;
         var infl = this.definition.selectedInfl;
-        var inflTable = searchByProperty(currentPassage.words.get(0).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
+        var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
         tooltip.appendChild(inflTable);
         
         this.HTMLelement.appendChild(tooltip);
