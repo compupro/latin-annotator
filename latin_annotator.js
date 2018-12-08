@@ -20,6 +20,16 @@ const linguisticTerms = {
     "all":"Masculine/Feminine/Neuter"
     };
 
+/*Utility functions*/
+function searchByProperty(array, property, val) {
+    for (const elem of array) {
+        if (elem[property] == val) {
+            return elem;
+        }
+    }
+    return null;
+}
+    
 /*The Passage class creates a passage from raw text when created.
 It contains all word objects of the passage.
 */
@@ -106,6 +116,12 @@ class Word {
         var wordMeaning = this.getSelectedEntry().meaning.replace(" ", "\u00A0");
         var meaning = document.createTextNode(wordMeaning);
         tooltip.appendChild(meaning);
+        
+        var entry = this.definition.selectedEntry;
+        var infl = this.definition.selectedInfl;
+        var inflTable = searchByProperty(currentPassage.words.get(0).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
+        tooltip.appendChild(inflTable);
+        
         this.HTMLelement.appendChild(tooltip);
     }
     
