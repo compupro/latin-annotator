@@ -151,7 +151,6 @@ class Word {
         var definitionContainer = document.getElementById("definitionContainer");
         definitionContainer.innerHTML = "";
         for (var e = 0 ; e < this.definition.entries.length; e++){
-            var entry = this.definition.entries[e]
             
             //start making the definition box where all the inflections will go inside
             var defElement = document.createElement("div");
@@ -159,77 +158,17 @@ class Word {
             //the meaning of the word is put in the definition box
             var meaningElement = document.createElement("p");
             meaningElement.className = "meaning";
-            meaningElement.appendChild(document.createTextNode(entry.meaning));
+            meaningElement.appendChild(document.createTextNode(this.definition.entries[e].meaning));
             defElement.appendChild(meaningElement);
 
-            //this div contains the tables, which goes inside the definition box
-            var inflectionContainer = document.createElement("div");
-            inflectionContainer.className = "inflections";
-
-            //start making the table here
-            var setInflection = function(element){
-                element.setAttribute("entryNumber", e);
-                element.setAttribute("inflectionNumber", i);
-            };
-            for (var i = 0; i < entry.inflections.length; i++){
-                var inflection = entry.inflections[i];
-                var table = document.createElement("table");
-                for (const property of inflection.keys()){
-                    var row = table.insertRow(-1);
-                    setInflection(row);
-                    var cell = row.insertCell(0)
-                    setInflection(cell);
-                    cell.appendChild(document.createTextNode(property));
-
-                    cell = row.insertCell(1);
-                    setInflection(cell);
-                    var propertyValue = inflection.get(property)
-                    propertyValue = propertyValue.replace("/", "/\u200b") //add zero-width spaces to slashes on the display text but not the original property
-                    cell.appendChild(document.createTextNode(propertyValue));
-                }
-                var tbody = table.children[0];
-                setInflection(tbody);
-
-                setInflection(table);
-                table.id = "inflTable " + e + " " + i;
-                table.classList.add("inflTable");
-
-                /*This part is still part of the table generation!
-                This handles for the inflection switching logic for the Definition it goes with*/
-                var self = this;
-                table.addEventListener("click", function(event){
-                    var target = event.target.tagName.toLowerCase == "tbody" ? event.target.parentElement: event.target;
-                    var entryNumber = target.getAttribute("entryNumber");
-                    var inflectionNumber = target.getAttribute("inflectionNumber");
-                    self.definition.selectedEntry = entryNumber;
-                    self.definition.selectedInfl = inflectionNumber;
-
-                    for (const table of self.definition.inflTables){
-                        if(table.getAttribute("entryNumber") == self.definition.selectedEntry &&
-                        table.getAttribute("inflectionNumber") == self.definition.selectedInfl){
-                            table.classList.add("currentInfl");
-                        } else {
-                            table.classList.remove("currentInfl");
-                        }
-                    }
-
-                    currentPassage.clearHighlights();
-                    self.HTMLelement.classList.add("selected");
-                    self.checkSentenceAgreement();
-                });
-                if(e == this.definition.selectedEntry && i == this.definition.selectedInfl){
-                    table.classList.add("currentInfl");
-                }
-                inflectionContainer.appendChild(table);
-                this.definition.inflTables.push(table);
-            }
-            //table making ends here
+            var inflectionContainer = this.definition.generateTablesByEntry(e, this, true);
+            
             defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
         }
         this.scrollToSelectedDef();
     }
-
+    
     scrollToSelectedDef(){
         var entry = this.definition.selectedEntry;
         var infl = this.definition.selectedInfl;
@@ -493,6 +432,71 @@ class Definition {
         this.selectedInfl = 0;
         this.entries = [];
         this.inflTables = [];
+    }
+    
+    generateTablesByEntry(e, wordObj, returnContainer){
+        var setInflection = function(element){
+                element.setAttribute("entryNumber", e);
+                element.setAttribute("inflectionNumber", i);
+            };
+        
+        if (returnContainer){
+            var inflectionContainer = document.createElement("div");
+            inflectionContainer.className = "inflections";
+        }
+        
+        var entry = this.entries[e];
+        for (var i = 0; i < entry.inflections.length; i++){
+            var inflection = entry.inflections[i];
+            var table = document.createElement("table");
+            for (const property of inflection.keys()){
+                var row = table.insertRow(-1);
+                setInflection(row);
+                var cell = row.insertCell(0)
+                setInflection(cell);
+                cell.appendChild(document.createTextNode(property));
+
+                cell = row.insertCell(1);
+                setInflection(cell);
+                var propertyValue = inflection.get(property)
+                propertyValue = propertyValue.replace("/", "/\u200b") //add zero-width spaces to slashes on the display text but not the original property
+                cell.appendChild(document.createTextNode(propertyValue));
+            }
+            var tbody = table.children[0];
+            setInflection(tbody);
+            table.id = "inflTable " + e + " " + i;
+            table.classList.add("inflTable");
+            
+            if(e == this.selectedEntry && i == this.selectedInfl){
+                table.classList.add("currentInfl");
+            }
+            
+            //Things to do when you click an inflTable
+            var self = this;
+            table.addEventListener("click", function(event){
+                var target = event.target.tagName.toLowerCase == "tbody" ? event.target.parentElement: event.target;
+                var entryNumber = target.getAttribute("entryNumber");
+                var inflectionNumber = target.getAttribute("inflectionNumber");
+                self.selectedEntry = entryNumber;
+                self.selectedInfl = inflectionNumber;
+
+                for (const table of self.inflTables){
+                    if(table.getAttribute("entryNumber") == self.selectedEntry &&
+                    table.getAttribute("inflectionNumber") == self.selectedInfl){
+                        table.classList.add("currentInfl");
+                    } else {
+                        table.classList.remove("currentInfl");
+                    }
+                }
+                currentPassage.clearHighlights();
+                wordObj.HTMLelement.classList.add("selected");
+                wordObj.checkSentenceAgreement();
+            });
+            
+            inflectionContainer.appendChild(table);
+            this.inflTables.push(table);
+        }
+    return inflectionContainer;
     }
 }
 
