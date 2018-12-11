@@ -464,6 +464,7 @@ class Definition {
             }
             var tbody = table.children[0];
             setInflection(tbody);
+            setInflection(table);
             table.id = "inflTable " + e + " " + i;
             table.classList.add("inflTable");
             
