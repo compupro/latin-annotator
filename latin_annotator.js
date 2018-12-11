@@ -117,12 +117,11 @@ class Word {
         var meaning = document.createTextNode(wordMeaning);
         tooltip.appendChild(meaning);
         
-        try {
-            var entry = this.definition.selectedEntry;
-            var infl = this.definition.selectedInfl;
-            var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
-            tooltip.appendChild(inflTable);
-        } catch (e) {};
+        var entry = this.definition.selectedEntry;
+        this.definition.generateTablesByEntry(entry, this, false);
+        var infl = this.definition.selectedInfl;
+        var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
+        tooltip.appendChild(inflTable);
         
         this.HTMLelement.appendChild(tooltip);
     }
@@ -494,7 +493,9 @@ class Definition {
                 wordObj.checkSentenceAgreement();
             });
             
-            inflectionContainer.appendChild(table);
+            if (returnContainer){
+                inflectionContainer.appendChild(table);
+            }
             this.inflTables.push(table);
         }
     return inflectionContainer;
