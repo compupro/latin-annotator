@@ -23,6 +23,8 @@ function dragElement(elem) {
         pos2 = e.clientY;
         // set the element's new position:
         elem.style.height = window.innerHeight - pos2 - 5 + "px";
+        dummyElem = document.getElementById("bottomDummy");
+        dummyElem.style.height = window.innerHeight - pos2 + "px";
     }
 
     function closeDragElement() {
