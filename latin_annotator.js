@@ -84,7 +84,11 @@ class Word {
         This does NOT include the definition elements nor the inflection tables!*/
         this.HTMLelement = document.createElement("span");
         this.HTMLelement.className = (wordString == "\n") ? "passageLineBreak" : "wordElement";
-        this.HTMLelement.innerHTML = (wordString == "\n") ? "<br />" : wordString;
+        if (wordString == '\n'){
+            this.HTMLelement.innerHTML = "<br />";
+        } else {
+            this.HTMLelement.appendChild(document.createTextNode(wordString));
+        }
         this.HTMLelement.id = this.wordID;
         
         var self = this;
