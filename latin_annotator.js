@@ -29,6 +29,28 @@ function searchByProperty(array, property, val) {
     }
     return null;
 }
+
+/**
+ * Function to sort alphabetically an array of objects by some specific key.
+ * 
+ * @param {String} property Key of the object to sort.
+ */
+function sortByProperty(property) {
+    var sortOrder = 1;
+
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+
+    return function (a,b) {
+        if (sortOrder == -1){
+            return b[property].localeCompare(a[property]);
+        } else {
+            return a[property].localeCompare(b[property]);
+        }        
+    }
+}
     
 /*The Passage class creates a passage from raw text when created.
 It contains all word objects of the passage.
@@ -229,10 +251,11 @@ class Word {
                 for (const entry of doc.getElementsByTagName("entry")){
                     try {
                         var meaning = entry.getElementsByTagName("mean")[0].textContent;
+                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
                     } catch (TypeError) {
                         var meaning = "Unknown meaning!";
                     }
-                    var convertedEntry = {meaning: meaning};
+                    var convertedEntry = {meaning: meaning, frequency: frequency};
                     convertedEntry.inflections = [];
                     var capitalize = function(s){return s[0].toUpperCase() + s.slice(1);}
                     for (const infl of entry.getElementsByTagName("infl")){
@@ -250,6 +273,7 @@ class Word {
                     }
                     definition.entries.push(convertedEntry);
                 }
+                //definition.entries.sort(sortByProperty("frequency"));
                 this.definition = definition;
                 break;
         }
