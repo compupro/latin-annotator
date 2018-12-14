@@ -30,11 +30,7 @@ function searchByProperty(array, property, val) {
     return null;
 }
 
-/**
- * Function to sort alphabetically an array of objects by some specific key.
- * 
- * @param {String} property Key of the object to sort.
- */
+//Function to sort alphabetically an array of objects by some specific key.
 function sortByProperty(property) {
     var sortOrder = 1;
 
@@ -273,7 +269,7 @@ class Word {
                     }
                     definition.entries.push(convertedEntry);
                 }
-                //definition.entries.sort(sortByProperty("frequency"));
+                definition.entries = definition.entries.sort(sortByProperty("-frequency"));
                 this.definition = definition;
                 break;
         }
