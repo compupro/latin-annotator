@@ -218,7 +218,7 @@ class Word {
                     self.checkSentenceAgreement();
                 } else if (otherWord != null){
                     if (self.agreesWith(otherWord)){
-                        self.agree();
+                        self.agree(self.agreesWith(otherWord));
                     }
                 }
                 if (showTooltip){
@@ -296,7 +296,8 @@ class Word {
                 if (wordObj.definition == null){
                     wordObj.getWordDefinitions(false, false, this.getSelectedInfl(), false);
                 } else if (wordObj.agreesWith(this.getSelectedInfl())){
-                    wordObj.agree();
+                    console.log(wordObj.agreesWith(this.getSelectedInfl()))
+                    wordObj.agree(wordObj.agreesWith(this.getSelectedInfl()));
                 }
             }
         }
@@ -392,12 +393,20 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") &&
                     myInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    myInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Person") &&
                     myInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    myInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Adverb"){
                     return true;
@@ -424,8 +433,17 @@ class Word {
         return false;
     }
 
-    agree(){
-        this.HTMLelement.classList.add("agrees");
+    agree(agreementType){
+        switch (agreementType){
+            case "Subject":
+                this.HTMLelement.classList.add("agreesSubject");
+                break;
+            case "Object":
+                this.HTMLelement.classList.add("agreesObject");
+                break;
+            default:
+                this.HTMLelement.classList.add("agrees");
+        }
     }
 
     getSelectedEntry(){

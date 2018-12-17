@@ -14,8 +14,12 @@ body {
     background-color: #acff68;
 }
 
-.agrees {
+.agrees, .agreesSubject {
     background-color: #ddffc2;
+}
+
+.agreesObject {
+    background-color: #ffc2c2;
 }
 
 .currentInfl {
