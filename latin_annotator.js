@@ -85,7 +85,7 @@ class Passage {
         for (const word of this.words.values()){
             word.HTMLelement.classList.remove("selected");
             for (var i = 0; i < word.HTMLelement.classList.length; i++){
-                var cssClass = word.HTMLelement.classList[i];
+                var cssClass = word.HTMLelement.classList[i]; //have to do this because classList will not iterate normally
                 if (cssClass.includes("agrees")){
                     word.HTMLelement.classList.remove(cssClass);
                 }
@@ -281,9 +281,9 @@ class Word {
     }
 
     pronounPerson(meaning){
-        if (meaning == "I, me (PERS); myself (REFLEX);"){
+        if (meaning == "I, me (PERS); myself (REFLEX);" || meaning == "we (pl.), us;"){
             return "1st";
-        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);"){
+        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);" || meaning == "you (pl.), ye;"){
             return "2nd";
         } else {
             return "3rd";
