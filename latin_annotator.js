@@ -84,7 +84,12 @@ class Passage {
     clearHighlights(){
         for (const word of this.words.values()){
             word.HTMLelement.classList.remove("selected");
-            word.HTMLelement.classList.remove("agrees");
+            for (var i = 0; i < word.HTMLelement.classList.length; i++){
+                var cssClass = word.HTMLelement.classList[i];
+                if (cssClass.includes("agrees")){
+                    word.HTMLelement.classList.remove(cssClass);
+                }
+            }
         }
     }
 }
