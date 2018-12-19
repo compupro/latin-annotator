@@ -14,8 +14,12 @@ body {
     background-color: #acff68;
 }
 
-.agrees, .agreesSubject {
+.agrees, .agreesVerbModifier{
     background-color: #ddffc2;
+}
+
+.agreesSubject {
+    background-color: #c2ddff;
 }
 
 .agreesObject {

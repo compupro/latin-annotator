@@ -257,6 +257,9 @@ class Word {
                     }
                     try {
                         var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
+                        if (frequency == null){
+                            var frequency = "0"; //"constrictam" yeilds <freq>Pliny</freq>, which is probably uncommon.
+                        }
                     } catch (TypeError) {
                         console.log("Couldn't get frequency data for the following entry:");
                         console.log(entry);
@@ -419,7 +422,7 @@ class Word {
                     return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Adverb"){
-                    return true;
+                    return "Verb modifier";
                 }
                 return false;
                 break;
@@ -444,12 +447,16 @@ class Word {
     }
 
     agree(agreementType){
+        var classList = this.HTMLelement.classList;
         switch (agreementType){
             case "Subject":
-                this.HTMLelement.classList.add("agreesSubject");
+                classList.add("agreesSubject");
                 break;
             case "Object":
-                this.HTMLelement.classList.add("agreesObject");
+                classList.add("agreesObject");
+                break;
+            case "Verb modifier":
+                classList.add("agreesVerbModifier");
                 break;
             default:
                 this.HTMLelement.classList.add("agrees");
