@@ -6,8 +6,10 @@ Nos bibimus aquam (bibunt bibitis).
 Tu bibis aquam (bibo bibit).
 Poeta bibit aquam (bibo bibis)
 
-<ADBVERB-VERB AGREEMENT>.
+<VERB MODIFIER-VERB AGREEMENT>.
 Interdum bibo bibere bibisse.
+Apud culinam bibo bibere bibisse.
+Ex culinis bibo bibere bibisse.
 
 <PREPOSITION-OBJECT AGREEMENT>.
 In culinis culinam.

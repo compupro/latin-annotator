@@ -424,6 +424,9 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Adverb"){
                     return "Verb modifier";
                 }
+                if (myInfl.get("Part of Speech") == "Preposition"){
+                    return "Verb modifier";
+                }
                 return false;
                 break;
             case "Verb participle":
