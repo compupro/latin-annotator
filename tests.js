@@ -1,6 +1,4 @@
-document.getElementById("input").value = `Puella mea me non amat. Vale, puella! Catullus obdurat: poeta puellam non amat, puellam
-nōn vocat, formam puellae non laudat, puellae rosas non dat, et puellam non basiat! Ira mea
-est magna! Obduro, mea puella— sed sine te non valeo.
+document.getElementById("input").value = ` quo usque tandem abutere, Catilina, patientia nostra? quam diu etiam furor iste tuus nos eludet? quem ad finem sese effrenata iactabit audacia? nihilne te nocturnum praesidium Palati, nihil urbis vigiliae, nihil timor populi, nihil concursus bonorum omnium, nihil hic munitissimus habendi senatus locus, nihil horum ora voltusque moverunt? patere tua consilia non sentis, constrictam iam horum omnium scientia teneri coniurationem tuam non vides?
 
 <NOUN/PRONOUN-VERB AGREEMENT>.
 Ego bibo aquam (bibit bibis).

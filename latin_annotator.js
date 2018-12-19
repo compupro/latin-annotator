@@ -252,9 +252,15 @@ class Word {
                 for (const entry of doc.getElementsByTagName("entry")){
                     try {
                         var meaning = entry.getElementsByTagName("mean")[0].textContent;
-                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
                     } catch (TypeError) {
                         var meaning = "Unknown meaning!";
+                    }
+                    try {
+                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
+                    } catch (TypeError) {
+                        console.log("Couldn't get frequency data for the following entry:");
+                        console.log(entry);
+                        var frequency = "999";
                     }
                     var convertedEntry = {meaning: meaning, frequency: frequency};
                     convertedEntry.inflections = [];
@@ -301,7 +307,6 @@ class Word {
                 if (wordObj.definition == null){
                     wordObj.getWordDefinitions(false, false, this.getSelectedInfl(), false);
                 } else if (wordObj.agreesWith(this.getSelectedInfl())){
-                    console.log(wordObj.agreesWith(this.getSelectedInfl()))
                     wordObj.agree(wordObj.agreesWith(this.getSelectedInfl()));
                 }
             }
