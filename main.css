@@ -14,7 +14,7 @@ body {
     background-color: #acff68;
 }
 
-.agrees, .agreesVerbModifier{
+.agrees, .agreesVerbModifier, .agreesModifiedVerb, .agreesModifiedNoun, .agreesVerb{
     background-color: #ddffc2;
 }
 
@@ -22,7 +22,7 @@ body {
     background-color: #c2ddff;
 }
 
-.agreesObject {
+.agreesObject, .agreesPrepObject, .agreesPrep{
     background-color: #ffc2c2;
 }
 

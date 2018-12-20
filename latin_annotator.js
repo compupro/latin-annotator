@@ -329,7 +329,7 @@ class Word {
         switch (wordInfl.get("Part of Speech")){
             case "Adverb":
                 if (myInfl.get("Part of Speech") == "Verb"){
-                    return true;
+                    return "Modified verb";
                 }
                 return false;
                 break;
@@ -337,7 +337,7 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Modified noun";
                 }
                 return false;
                 break;
@@ -345,43 +345,50 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Adjective" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Noun modifier";
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
                     myInfl.get("Person") == "3rd" &&
                     isSame("Number") &&
                     wordInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Verb" &&
+                    wordInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Noun modifier";
                 }
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     (myInfl.get("Case") == "Genitive" ||
                     wordInfl.get("Case") == "Genitive")){
-                    return true;
+                    return "Modified noun";
                 }
                 if (myInfl.get("Part of Speech") == "Preposition" &&
                     isSame("Case")){
-                    return true;
+                    return "Preposition";
                 }
                 if (myInfl.get("Part of Speech") == "Verb participle" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Noun modifier";
                 }
                 return false;
                 break;
             case "Preposition":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Case")){
-                    return true;
+                    return "Prepositional object";
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Case")){
-                    return true;
+                    return "Prepositional object";
+                }
+                if (myInfl.get("Part of Speech") == "Verb"){
+                    return "Modified verb";
                 }
                 return false;
                 break;
@@ -389,16 +396,20 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Modified noun";
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
                     isSame("Number") && isSame("Person") &&
                     wordInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Verb" &&
+                    wordInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Preposition" &&
                     isSame("Case")){
-                    return true;
+                    return "Prepositional object";
                 }
                 return false;
                 break;
@@ -433,7 +444,7 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Modified noun";
                 }
                 return false;
                 break;
@@ -461,7 +472,23 @@ class Word {
             case "Verb modifier":
                 classList.add("agreesVerbModifier");
                 break;
+            case "Modified verb":
+                classList.add("agreesModifiedVerb");
+                break;
+            case "Modified noun":
+                classList.add("agreesModifiedNoun");
+                break;
+            case "Prepositional object":
+                classList.add("agreesPrepObject");
+                break;
+            case "Verb":
+                classList.add("agreesVerb");
+                break;
+            case "Preposition":
+                classList.add("agreesPrep");
+                break;
             default:
+                console.log(agreementType);
                 this.HTMLelement.classList.add("agrees");
         }
     }
