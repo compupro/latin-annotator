@@ -92,6 +92,19 @@ class Passage {
             }
         }
     }
+    
+    setAgreementKey(partOfSpeech) {
+            var agreementKey = document.getElementById("agreementKey");
+            var keyText;
+            switch (partOfSpeech){
+                case "Verb":
+                    keyText = document.createTextNode("blah blah blah");
+                default:
+                    keyText = document.createTextNode("No word selected or word with part of speech containing no agreement relationships selected");
+                    agreementKey.appendChild(keyText);
+            }
+            agreementKey.appendChild(keyText);
+        }
 }
 
 class Word {

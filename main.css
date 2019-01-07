@@ -107,3 +107,14 @@ body {
     box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
     white-space: pre;
 }
+
+#agreementKey {
+    position: absolute;
+    z-index: 1;
+    max-width: 250px;
+    height: 100px;
+    box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
+    right: 0;
+    top: 25%;
+    background-color: white;
+}
