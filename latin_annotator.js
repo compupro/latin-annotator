@@ -95,10 +95,12 @@ class Passage {
     
     setAgreementKey(partOfSpeech) {
             var agreementKey = document.getElementById("agreementKey");
+            agreementKey.innerHTML = "";
             var keyText;
             switch (partOfSpeech){
                 case "Verb":
                     keyText = document.createTextNode("blah blah blah");
+                    break;
                 default:
                     keyText = document.createTextNode("No word selected or word with part of speech containing no agreement relationships selected");
                     agreementKey.appendChild(keyText);
@@ -182,8 +184,9 @@ class Word {
         if (this.definition != null){ //If there is a definition
             this.updateDefinitionView();
             this.checkSentenceAgreement();
+            currentPassage.setAgreementKey(this.getSelectedInfl().get("Part of Speech"));
         } else {
-            this.getWordDefinitions({"updateView":true, "checkSentenceAgreement":true});
+            this.getWordDefinitions({"updateView":true, "checkSentenceAgreement":true, "showKey":true});
         }
     }
 
@@ -220,7 +223,7 @@ class Word {
     /*Gets word definitions as an XML document which is passed to updateWordDefinition()
     Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.
     
-    updateView, checkSentenceAgreement, otherWord, showTooltip*/
+    Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
     getWordDefinitions(kwArgs){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
@@ -245,6 +248,9 @@ class Word {
                 }
                 if (kwArgs["showTooltip"]){
                     self.showTooltip();
+                }
+                if (kwArgs["showKey"]){
+                    currentPassage.setAgreementKey(self.getSelectedInfl().get("Part of Speech"));
                 }
             }
         }
