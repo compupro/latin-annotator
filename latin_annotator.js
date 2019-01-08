@@ -143,7 +143,8 @@ class Word {
     
     mousedover(){
         if (this.definition == null){
-            this.getWordDefinitions(false, false, null, true)
+            //this.getWordDefinitions(false, false, null, true)
+            this.getWordDefinitions({"showTooltip":true})
         } else {
             this.showTooltip();
         }
@@ -182,7 +183,7 @@ class Word {
             this.updateDefinitionView();
             this.checkSentenceAgreement();
         } else {
-            this.getWordDefinitions(true, true, null, false);
+            this.getWordDefinitions({"updateView":true, "checkSentenceAgreement":true});
         }
     }
 
@@ -217,8 +218,10 @@ class Word {
     }
 
     /*Gets word definitions as an XML document which is passed to updateWordDefinition()
-    Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.*/
-    getWordDefinitions(updateView, checkSentenceAgreement, otherWord, showTooltip){
+    Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.
+    
+    updateView, checkSentenceAgreement, otherWord, showTooltip*/
+    getWordDefinitions(kwArgs){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
 
@@ -229,17 +232,18 @@ class Word {
                 var parser = new DOMParser();
                 doc = parser.parseFromString(doc, "text/xml");
                 self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                if (updateView){
+                if (kwArgs["updateView"]){
                     self.updateDefinitionView();
                 }
-                if (checkSentenceAgreement){
+                if (kwArgs["checkSentenceAgreement"]){
                     self.checkSentenceAgreement();
-                } else if (otherWord != null){
+                } else if (kwArgs["otherWord"]){
+                    var otherWord = kwArgs["otherWord"];
                     if (self.agreesWith(otherWord)){
                         self.agree(self.agreesWith(otherWord));
                     }
                 }
-                if (showTooltip){
+                if (kwArgs["showTooltip"]){
                     self.showTooltip();
                 }
             }
@@ -321,7 +325,7 @@ class Word {
             if (wordObj.sentence == this.sentence && wordID != this.wordID &&
                 wordObj.wordString != "\n"){
                 if (wordObj.definition == null){
-                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl(), false);
+                    wordObj.getWordDefinitions({"otherWord":this.getSelectedInfl()});
                 } else if (wordObj.agreesWith(this.getSelectedInfl())){
                     wordObj.agree(wordObj.agreesWith(this.getSelectedInfl()));
                 }
