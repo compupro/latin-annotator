@@ -47,7 +47,15 @@ function sortByProperty(property) {
         }        
     }
 }
-    
+
+//Returns a p element with class className containing text
+function styledText(text, className) {
+    p = document.createElement("p");
+    p.classList.add(className);
+    p.innerHTML = text;
+    return p;
+}
+ 
 /*The Passage class creates a passage from raw text when created.
 It contains all word objects of the passage.
 */
@@ -96,14 +104,20 @@ class Passage {
     setAgreementKey(partOfSpeech) {
             var agreementKey = document.getElementById("agreementKey");
             agreementKey.innerHTML = "";
-            var keyText;
+            var keyText = document.createElement("div");
+            keyText.appendChild(styledText("Selected word", "selected"));
             switch (partOfSpeech){
                 case "Verb":
-                    keyText = document.createTextNode("blah blah blah");
+                    keyText.appendChild(styledText("Subject", "agreesSubject"));
+                    keyText.appendChild(styledText("Object", "agreesObject"));
+                    keyText.appendChild(styledText("Verb Modifier", "agreesVerbModifier"));
+                    break;
+                case "Noun":
+                    keyText.appendChild(styledText("Subject of verb", "agreesSubject"));
+                    keyText.appendChild(styledText("Object of verb", "agreesObject"));
                     break;
                 default:
-                    keyText = document.createTextNode("No word selected or word with part of speech containing no agreement relationships selected");
-                    agreementKey.appendChild(keyText);
+                    keyText.appendChild(document.createTextNode("No word selected or word with part of speech containing no agreement relationships selected"));
             }
             agreementKey.appendChild(keyText);
         }
