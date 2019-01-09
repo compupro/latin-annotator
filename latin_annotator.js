@@ -110,11 +110,35 @@ class Passage {
                 case "Verb":
                     keyText.appendChild(styledText("Subject", "agreesSubject"));
                     keyText.appendChild(styledText("Object", "agreesObject"));
-                    keyText.appendChild(styledText("Verb Modifier", "agreesVerbModifier"));
+                    keyText.appendChild(styledText("Modified by", "agreesVerbModifier"));
                     break;
                 case "Noun":
-                    keyText.appendChild(styledText("Subject of verb", "agreesSubject"));
-                    keyText.appendChild(styledText("Object of verb", "agreesObject"));
+                    keyText.appendChild(styledText("Verb subject of", "agreesSubject"));
+                    keyText.appendChild(styledText("Verb object of", "agreesObject"));
+                    keyText.appendChild(styledText("Prepositional object of", "agreesPrepObject"));
+                    keyText.appendChild(styledText("Modified by", "agreesNounModifier"));
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));keyText.appendChild(styledText("Modified Pronoun", "agreesModifiedPronoun"));
+                    break;
+                case "Pronoun":
+                    keyText.appendChild(styledText("Verb subject of", "agreesSubject"));
+                    keyText.appendChild(styledText("Verb object of", "agreesObject"));
+                    keyText.appendChild(styledText("Prepositional object of", "agreesPrepObject"));
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));
+                    keyText.appendChild(styledText("Modified by", "agreesPronounModifier"));
+                    break;
+                case "Adverb":
+                    keyText.appendChild(styledText("Modified Verb", "agreesModifiedVerb"));
+                    break;
+                case "Adjective":
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));
+                    keyText.appendChild(styledText("Modified Pronoun", "agreesModifiedPronoun"));
+                    break;
+                case "Verb participle":
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));
+                    break;
+                case "Preposition":
+                    keyText.appendChild(styledText("Object", "agreesPrepObject"));
+                    keyText.appendChild(styledText("Modified Verb", "agreesVerbModifier"));
                     break;
                 default:
                     keyText.appendChild(document.createTextNode("No word selected or word with part of speech containing no agreement relationships selected"));
@@ -376,6 +400,11 @@ class Word {
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
                     return "Modified noun";
                 }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    isSame("Number") && isSame("Case") &&
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
+                    return "Modified pronoun";
+                }
                 return false;
                 break;
             case "Noun":
@@ -397,7 +426,7 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return "Noun modifier";
+                    return "Pronoun modifier";
                 }
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     (myInfl.get("Case") == "Genitive" ||
@@ -447,6 +476,11 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Preposition" &&
                     isSame("Case")){
                     return "Prepositional object";
+                }
+                if (myInfl.get("Part of Speech") == "Adjective" &&
+                    isSame("Number") && isSame("Case") &&
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
+                    return "Pronoun modifier";
                 }
                 return false;
                 break;
@@ -515,6 +549,15 @@ class Word {
             case "Modified noun":
                 classList.add("agreesModifiedNoun");
                 break;
+            case "Noun modifier":
+                classList.add("agreesNounModifier");
+                break;
+            case "Modified pronoun":
+                classList.add("agreesModifiedPronoun");
+                break;
+            case "Pronoun modifier":
+                classList.add("agreesPronounModifier");
+                break;
             case "Prepositional object":
                 classList.add("agreesPrepObject");
                 break;
@@ -525,7 +568,7 @@ class Word {
                 classList.add("agreesPrep");
                 break;
             default:
-                console.log(agreementType);
+                console.log("Agreement type not handled by agree() highlighter: " + agreementType);
                 this.HTMLelement.classList.add("agrees");
         }
     }
