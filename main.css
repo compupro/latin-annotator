@@ -14,8 +14,16 @@ body {
     background-color: #acff68;
 }
 
-.agrees {
+.agrees, .agreesVerbModifier, .agreesModifiedVerb, .agreesModifiedNoun, .agreesVerb, .agreesNounModifier, .agreesModifiedPronoun, .agreesPronounModifier{
     background-color: #ddffc2;
+}
+
+.agreesSubject {
+    background-color: #c2ddff;
+}
+
+.agreesObject, .agreesPrepObject, .agreesPrep{
+    background-color: #ffc2c2;
 }
 
 .currentInfl {
@@ -29,6 +37,7 @@ body {
     background-color: #FFFFFF;
     border-radius: 5px;
     box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
+    overflow: auto;
 }
 
 .inflections {
@@ -50,7 +59,7 @@ body {
 }
 
 .inflTable:hover {
-    box-shadow: 0 1px 6px 2px rgba(60,64,67,.64);
+    box-shadow: 0 2px 6px 2px rgba(60,64,67,.32);
 }
  
 #resizer {
@@ -97,4 +106,15 @@ body {
     padding: 5px;
     box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
     white-space: pre;
+}
+
+#agreementKey {
+    position: absolute;
+    z-index: 1;
+    max-width: 250px;
+    box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
+    right: 0;
+    top: 25%;
+    background-color: white;
+    padding: 0 10px 0 10px;
 }

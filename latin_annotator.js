@@ -47,7 +47,15 @@ function sortByProperty(property) {
         }        
     }
 }
-    
+
+//Returns a p element with class className containing text
+function styledText(text, className) {
+    p = document.createElement("p");
+    p.classList.add(className);
+    p.innerHTML = text;
+    return p;
+}
+ 
 /*The Passage class creates a passage from raw text when created.
 It contains all word objects of the passage.
 */
@@ -84,9 +92,62 @@ class Passage {
     clearHighlights(){
         for (const word of this.words.values()){
             word.HTMLelement.classList.remove("selected");
-            word.HTMLelement.classList.remove("agrees");
+            for (var i = 0; i < word.HTMLelement.classList.length; i++){
+                var cssClass = word.HTMLelement.classList[i]; //have to do this because classList will not iterate normally
+                if (cssClass.includes("agrees")){
+                    word.HTMLelement.classList.remove(cssClass);
+                }
+            }
         }
     }
+    
+    setAgreementKey(partOfSpeech) {
+            var agreementKey = document.getElementById("agreementKey");
+            agreementKey.innerHTML = "";
+            var keyText = document.createElement("div");
+            var keyHeader = document.createElement("h3");
+            keyHeader.appendChild(document.createTextNode("Agreement Highlight Key"));
+            keyText.appendChild(keyHeader);
+            keyText.appendChild(styledText("Selected word: " + partOfSpeech, "selected"));
+            switch (partOfSpeech){
+                case "Verb":
+                    keyText.appendChild(styledText("Subject", "agreesSubject"));
+                    keyText.appendChild(styledText("Object", "agreesObject"));
+                    keyText.appendChild(styledText("Modified by", "agreesVerbModifier"));
+                    break;
+                case "Noun":
+                    keyText.appendChild(styledText("Verb subject of", "agreesSubject"));
+                    keyText.appendChild(styledText("Verb object of", "agreesObject"));
+                    keyText.appendChild(styledText("Prepositional object of", "agreesPrepObject"));
+                    keyText.appendChild(styledText("Modified by", "agreesNounModifier"));
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));keyText.appendChild(styledText("Modified Pronoun", "agreesModifiedPronoun"));
+                    break;
+                case "Pronoun":
+                    keyText.appendChild(styledText("Verb subject of", "agreesSubject"));
+                    keyText.appendChild(styledText("Verb object of", "agreesObject"));
+                    keyText.appendChild(styledText("Prepositional object of", "agreesPrepObject"));
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));
+                    keyText.appendChild(styledText("Modified by", "agreesPronounModifier"));
+                    break;
+                case "Adverb":
+                    keyText.appendChild(styledText("Modified Verb", "agreesModifiedVerb"));
+                    break;
+                case "Adjective":
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));
+                    keyText.appendChild(styledText("Modified Pronoun", "agreesModifiedPronoun"));
+                    break;
+                case "Verb participle":
+                    keyText.appendChild(styledText("Modified Noun", "agreesModifiedNoun"));
+                    break;
+                case "Preposition":
+                    keyText.appendChild(styledText("Object", "agreesPrepObject"));
+                    keyText.appendChild(styledText("Modified Verb", "agreesVerbModifier"));
+                    break;
+                default:
+                    console.log("Could not generate key text for part of speech: " + partOfSpeech);
+            }
+            agreementKey.appendChild(keyText);
+        }
 }
 
 class Word {
@@ -125,7 +186,8 @@ class Word {
     
     mousedover(){
         if (this.definition == null){
-            this.getWordDefinitions(false, false, null, true)
+            //this.getWordDefinitions(false, false, null, true)
+            this.getWordDefinitions({"showTooltip":true})
         } else {
             this.showTooltip();
         }
@@ -163,8 +225,9 @@ class Word {
         if (this.definition != null){ //If there is a definition
             this.updateDefinitionView();
             this.checkSentenceAgreement();
+            currentPassage.setAgreementKey(this.getSelectedInfl().get("Part of Speech"));
         } else {
-            this.getWordDefinitions(true, true, null, false);
+            this.getWordDefinitions({"updateView":true, "checkSentenceAgreement":true, "showKey":true});
         }
     }
 
@@ -199,8 +262,10 @@ class Word {
     }
 
     /*Gets word definitions as an XML document which is passed to updateWordDefinition()
-    Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.*/
-    getWordDefinitions(updateView, checkSentenceAgreement, otherWord, showTooltip){
+    Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.
+    
+    Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
+    getWordDefinitions(kwArgs){
         var x = new XMLHttpRequest();
         x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
 
@@ -211,18 +276,22 @@ class Word {
                 var parser = new DOMParser();
                 doc = parser.parseFromString(doc, "text/xml");
                 self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                if (updateView){
+                if (kwArgs["updateView"]){
                     self.updateDefinitionView();
                 }
-                if (checkSentenceAgreement){
+                if (kwArgs["checkSentenceAgreement"]){
                     self.checkSentenceAgreement();
-                } else if (otherWord != null){
+                } else if (kwArgs["otherWord"]){
+                    var otherWord = kwArgs["otherWord"];
                     if (self.agreesWith(otherWord)){
-                        self.agree();
+                        self.agree(self.agreesWith(otherWord));
                     }
                 }
-                if (showTooltip){
+                if (kwArgs["showTooltip"]){
                     self.showTooltip();
+                }
+                if (kwArgs["showKey"]){
+                    currentPassage.setAgreementKey(self.getSelectedInfl().get("Part of Speech"));
                 }
             }
         }
@@ -247,9 +316,18 @@ class Word {
                 for (const entry of doc.getElementsByTagName("entry")){
                     try {
                         var meaning = entry.getElementsByTagName("mean")[0].textContent;
-                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
                     } catch (TypeError) {
                         var meaning = "Unknown meaning!";
+                    }
+                    try {
+                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
+                        if (frequency == null){
+                            var frequency = "0"; //"constrictam" yeilds <freq>Pliny</freq>, which is probably uncommon.
+                        }
+                    } catch (TypeError) {
+                        console.log("Couldn't get frequency data for the following entry:");
+                        console.log(entry);
+                        var frequency = "999";
                     }
                     var convertedEntry = {meaning: meaning, frequency: frequency};
                     convertedEntry.inflections = [];
@@ -276,9 +354,9 @@ class Word {
     }
 
     pronounPerson(meaning){
-        if (meaning == "I, me (PERS); myself (REFLEX);"){
+        if (meaning == "I, me (PERS); myself (REFLEX);" || meaning == "we (pl.), us;"){
             return "1st";
-        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);"){
+        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);" || meaning == "you (pl.), ye;"){
             return "2nd";
         } else {
             return "3rd";
@@ -294,9 +372,9 @@ class Word {
             if (wordObj.sentence == this.sentence && wordID != this.wordID &&
                 wordObj.wordString != "\n"){
                 if (wordObj.definition == null){
-                    wordObj.getWordDefinitions(false, false, this.getSelectedInfl(), false);
+                    wordObj.getWordDefinitions({"otherWord":this.getSelectedInfl()});
                 } else if (wordObj.agreesWith(this.getSelectedInfl())){
-                    wordObj.agree();
+                    wordObj.agree(wordObj.agreesWith(this.getSelectedInfl()));
                 }
             }
         }
@@ -315,7 +393,7 @@ class Word {
         switch (wordInfl.get("Part of Speech")){
             case "Adverb":
                 if (myInfl.get("Part of Speech") == "Verb"){
-                    return true;
+                    return "Modified verb";
                 }
                 return false;
                 break;
@@ -323,7 +401,12 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Modified noun";
+                }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    isSame("Number") && isSame("Case") &&
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
+                    return "Modified pronoun";
                 }
                 return false;
                 break;
@@ -331,43 +414,50 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Adjective" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Noun modifier";
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
                     myInfl.get("Person") == "3rd" &&
                     isSame("Number") &&
                     wordInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Verb" &&
+                    wordInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Pronoun modifier";
                 }
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     (myInfl.get("Case") == "Genitive" ||
                     wordInfl.get("Case") == "Genitive")){
-                    return true;
+                    return "Modified noun";
                 }
                 if (myInfl.get("Part of Speech") == "Preposition" &&
                     isSame("Case")){
-                    return true;
+                    return "Preposition";
                 }
                 if (myInfl.get("Part of Speech") == "Verb participle" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Noun modifier";
                 }
                 return false;
                 break;
             case "Preposition":
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Case")){
-                    return true;
+                    return "Prepositional object";
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Case")){
-                    return true;
+                    return "Prepositional object";
+                }
+                if (myInfl.get("Part of Speech") == "Verb"){
+                    return "Modified verb";
                 }
                 return false;
                 break;
@@ -375,16 +465,25 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Modified noun";
                 }
                 if (myInfl.get("Part of Speech") == "Verb" &&
                     isSame("Number") && isSame("Person") &&
                     wordInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Verb" &&
+                    wordInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Preposition" &&
                     isSame("Case")){
-                    return true;
+                    return "Prepositional object";
+                }
+                if (myInfl.get("Part of Speech") == "Adjective" &&
+                    isSame("Number") && isSame("Case") &&
+                    this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
+                    return "Pronoun modifier";
                 }
                 return false;
                 break;
@@ -392,15 +491,26 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") &&
                     myInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Noun" &&
+                    myInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Pronoun" &&
                     isSame("Number") && isSame("Person") &&
                     myInfl.get("Case") == "Nominative"){
-                    return true;
+                    return "Subject";
+                }
+                if (myInfl.get("Part of Speech") == "Pronoun" &&
+                    myInfl.get("Case") == "Accusative"){
+                    return "Object";
                 }
                 if (myInfl.get("Part of Speech") == "Adverb"){
-                    return true;
+                    return "Verb modifier";
+                }
+                if (myInfl.get("Part of Speech") == "Preposition"){
+                    return "Verb modifier";
                 }
                 return false;
                 break;
@@ -408,7 +518,7 @@ class Word {
                 if (myInfl.get("Part of Speech") == "Noun" &&
                     isSame("Number") && isSame("Case") &&
                     this.matchGender(wordInfl.get("Gender"), myInfl.get("Gender"))){
-                    return true;
+                    return "Modified noun";
                 }
                 return false;
                 break;
@@ -424,8 +534,46 @@ class Word {
         return false;
     }
 
-    agree(){
-        this.HTMLelement.classList.add("agrees");
+    agree(agreementType){
+        var classList = this.HTMLelement.classList;
+        switch (agreementType){
+            case "Subject":
+                classList.add("agreesSubject");
+                break;
+            case "Object":
+                classList.add("agreesObject");
+                break;
+            case "Verb modifier":
+                classList.add("agreesVerbModifier");
+                break;
+            case "Modified verb":
+                classList.add("agreesModifiedVerb");
+                break;
+            case "Modified noun":
+                classList.add("agreesModifiedNoun");
+                break;
+            case "Noun modifier":
+                classList.add("agreesNounModifier");
+                break;
+            case "Modified pronoun":
+                classList.add("agreesModifiedPronoun");
+                break;
+            case "Pronoun modifier":
+                classList.add("agreesPronounModifier");
+                break;
+            case "Prepositional object":
+                classList.add("agreesPrepObject");
+                break;
+            case "Verb":
+                classList.add("agreesVerb");
+                break;
+            case "Preposition":
+                classList.add("agreesPrep");
+                break;
+            default:
+                console.log("Agreement type not handled by agree() highlighter: " + agreementType);
+                this.HTMLelement.classList.add("agrees");
+        }
     }
 
     getSelectedEntry(){
@@ -513,6 +661,9 @@ class Definition {
                     }
                 }
                 currentPassage.clearHighlights();
+                var entry = self.entries[entryNumber];
+                var infl = entry.inflections[inflectionNumber];
+                currentPassage.setAgreementKey(infl.get("Part of Speech"));
                 wordObj.HTMLelement.classList.add("selected");
                 wordObj.checkSentenceAgreement();
             });
