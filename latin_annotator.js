@@ -661,6 +661,9 @@ class Definition {
                     }
                 }
                 currentPassage.clearHighlights();
+                var entry = self.entries[entryNumber];
+                var infl = entry.inflections[inflectionNumber];
+                currentPassage.setAgreementKey(infl.get("Part of Speech"));
                 wordObj.HTMLelement.classList.add("selected");
                 wordObj.checkSentenceAgreement();
             });
