@@ -105,6 +105,9 @@ class Passage {
             var agreementKey = document.getElementById("agreementKey");
             agreementKey.innerHTML = "";
             var keyText = document.createElement("div");
+            var keyHeader = document.createElement("h3");
+            keyHeader.appendChild(document.createTextNode("Agreement Highlight Key"));
+            keyText.appendChild(keyHeader);
             keyText.appendChild(styledText("Selected word", "selected"));
             switch (partOfSpeech){
                 case "Verb":
@@ -141,7 +144,7 @@ class Passage {
                     keyText.appendChild(styledText("Modified Verb", "agreesVerbModifier"));
                     break;
                 default:
-                    keyText.appendChild(document.createTextNode("No word selected or word with part of speech containing no agreement relationships selected"));
+                    console.log("Could not generate key text for part of speech: " + partOfSpeech);
             }
             agreementKey.appendChild(keyText);
         }
