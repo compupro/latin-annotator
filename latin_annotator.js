@@ -108,7 +108,7 @@ class Passage {
             var keyHeader = document.createElement("h3");
             keyHeader.appendChild(document.createTextNode("Agreement Highlight Key"));
             keyText.appendChild(keyHeader);
-            keyText.appendChild(styledText("Selected word", "selected"));
+            keyText.appendChild(styledText("Selected word: " + partOfSpeech, "selected"));
             switch (partOfSpeech){
                 case "Verb":
                     keyText.appendChild(styledText("Subject", "agreesSubject"));
