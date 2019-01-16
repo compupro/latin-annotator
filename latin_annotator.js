@@ -261,41 +261,54 @@ class Word {
         defDiv.parentElement.scrollTop = defDiv.offsetTop - 10;
     }
 
-    /*Gets word definitions as an XML document which is passed to updateWordDefinition()
-    Optionally runs updateView and/or checkSentenceAgreement if set. I would have used callbacks for that but it didn't work.
-    
-    Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
+    //Gets word definitions as an XML document which is passed to updateWordDefinition()
     getWordDefinitions(kwArgs){
-        var x = new XMLHttpRequest();
-        x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
+        var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
+        if (cacheDef != null){
+            console.log("got something from cache");
+            this.definition = cacheDef;
+            this.afterFetching(this, kwArgs);
+        } else {
+            var x = new XMLHttpRequest();
+            x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
 
-        var self = this;
-        x.onreadystatechange = function () {
-            if (x.readyState == 4 && x.status == 201) {
-                var doc = x.response;
-                var parser = new DOMParser();
-                doc = parser.parseFromString(doc, "text/xml");
-                self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                if (kwArgs["updateView"]){
-                    self.updateDefinitionView();
-                }
-                if (kwArgs["checkSentenceAgreement"]){
-                    self.checkSentenceAgreement();
-                } else if (kwArgs["otherWord"]){
-                    var otherWord = kwArgs["otherWord"];
-                    if (self.agreesWith(otherWord)){
-                        self.agree(self.agreesWith(otherWord));
-                    }
-                }
-                if (kwArgs["showTooltip"]){
-                    self.showTooltip();
-                }
-                if (kwArgs["showKey"]){
-                    currentPassage.setAgreementKey(self.getSelectedInfl().get("Part of Speech"));
+            var self = this;
+            x.onreadystatechange = function () {
+                if (x.readyState == 4 && x.status == 201) {
+                    var doc = x.response;
+                    var parser = new DOMParser();
+                    doc = parser.parseFromString(doc, "text/xml");
+                    self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
+                    self.afterFetching(self, kwArgs);
                 }
             }
+            x.send(null);
         }
-        x.send(null);
+    }
+    
+    /*There are a bunch of things that the Word can do after a definition is acquired
+    They are all in here.
+    You have to provide a self argument because it gets used in an async function
+    
+    Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
+    afterFetching(self, kwArgs){
+        if (kwArgs["updateView"]){
+            self.updateDefinitionView();
+        }
+        if (kwArgs["checkSentenceAgreement"]){
+            self.checkSentenceAgreement();
+        } else if (kwArgs["otherWord"]){
+            var otherWord = kwArgs["otherWord"];
+            if (self.agreesWith(otherWord)){
+                self.agree(self.agreesWith(otherWord));
+            }
+        }
+        if (kwArgs["showTooltip"]){
+            self.showTooltip();
+        }
+        if (kwArgs["showKey"]){
+            currentPassage.setAgreementKey(self.getSelectedInfl().get("Part of Speech"));
+        }
     }
     
     /*Uses the XML parser with the XML document from the API to generate the array of entries.*/
@@ -348,6 +361,7 @@ class Word {
                     definition.entries.push(convertedEntry);
                 }
                 definition.entries = definition.entries.sort(sortByProperty("-frequency"));
+                setCachedDefinition(ALPHEIOS_PERL_URL, this.wordNoPunctuation, definition);
                 this.definition = definition;
                 break;
         }
@@ -678,6 +692,7 @@ class Definition {
 }
 
 var currentPassage;
+var originSetting = ALPHEIOS_PERL_URL;
 
 function processInput(){
     currentPassage = new Passage(document.getElementById("input").value);
