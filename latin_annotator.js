@@ -182,6 +182,7 @@ class Word {
         });
 
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
+        document.getElementById("wordElementContainer").appendChild(document.createTextNode(" "));
     }
     
     mousedover(){
@@ -265,7 +266,6 @@ class Word {
     getWordDefinitions(kwArgs){
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
         if (cacheDef != null){
-            console.log("got something from cache");
             this.definition = cacheDef;
             this.afterFetching(this, kwArgs);
         } else {

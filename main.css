@@ -3,7 +3,6 @@ body {
 }
 
 .wordElement {
-    padding-right: 5px;
     text-decoration: none;
     cursor: pointer;
     position: relative;
