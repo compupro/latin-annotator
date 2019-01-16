@@ -18,6 +18,9 @@ Ex culinis (culinam).
 
 <ADJECTIVE-NOUN AGREEMENT>.
 Caerulus caelus (caeli caelum).
-Caerula flora (agricola florae).`;
+Caerula flora (agricola florae).
+
+<CACHE TEST>
+Salve. Salve. Salve. Salve. Salve.`;
 processInput();
 currentPassage.words.get(0).clicked();

@@ -263,31 +263,34 @@ class Word {
 
     //Gets word definitions as an XML document which is passed to updateWordDefinition()
     getWordDefinitions(kwArgs){
-        var defFromCache = getCachedDefinition(originSetting, this.wordNoPunctuation);
-        if (defFromCache){
+        var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
+        if (cacheDef != null){
             console.log("got something from cache");
-        }
-        
-        var x = new XMLHttpRequest();
-        x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
+            this.definition = cacheDef;
+            this.afterFetching(this, kwArgs);
+        } else {
+            var x = new XMLHttpRequest();
+            x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
 
-        var self = this;
-        x.onreadystatechange = function () {
-            if (x.readyState == 4 && x.status == 201) {
-                var doc = x.response;
-                var parser = new DOMParser();
-                doc = parser.parseFromString(doc, "text/xml");
-                self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                self.afterFetching(self, kwArgs);
+            var self = this;
+            x.onreadystatechange = function () {
+                if (x.readyState == 4 && x.status == 201) {
+                    var doc = x.response;
+                    var parser = new DOMParser();
+                    doc = parser.parseFromString(doc, "text/xml");
+                    self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
+                    self.afterFetching(self, kwArgs);
+                }
             }
+            x.send(null);
         }
-        x.send(null);
     }
     
-    //There are a bunch of things that the Word can do after a definition is acquired
-    //They are all in here.
-    //You have to provide a self argument because it gets used in an async function
-    //Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip
+    /*There are a bunch of things that the Word can do after a definition is acquired
+    They are all in here.
+    You have to provide a self argument because it gets used in an async function
+    
+    Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
     afterFetching(self, kwArgs){
         if (kwArgs["updateView"]){
             self.updateDefinitionView();
