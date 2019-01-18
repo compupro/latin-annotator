@@ -261,7 +261,7 @@ class Word {
         var defDiv = table.parentElement.parentElement;
         defDiv.parentElement.scrollTop = defDiv.offsetTop - 10;
     }
-
+    
     //Gets word definitions as an XML document which is passed to updateWordDefinition()
     getWordDefinitions(kwArgs){
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
@@ -269,21 +269,13 @@ class Word {
             this.definition = cacheDef;
             this.afterFetching(this, kwArgs);
         } else {
-            var x = new XMLHttpRequest();
-            x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
-
-            var self = this;
-            x.onreadystatechange = function () {
-                if (x.readyState == 4 && x.status == 201) {
-                    var doc = x.response;
-                    var parser = new DOMParser();
-                    doc = parser.parseFromString(doc, "text/xml");
-                    self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                    self.afterFetching(self, kwArgs);
-                }
-            }
-            x.send(null);
+            getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching, kwArgs);
         }
+    }
+    
+    updateWordDefintion(definition, kwArgs){
+        this.definition = definition;
+        this.afterFetching(kwArgs);
     }
     
     /*There are a bunch of things that the Word can do after a definition is acquired
@@ -291,89 +283,23 @@ class Word {
     You have to provide a self argument because it gets used in an async function
     
     Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
-    afterFetching(self, kwArgs){
+    afterFetching(kwArgs){
         if (kwArgs["updateView"]){
-            self.updateDefinitionView();
+            this.updateDefinitionView();
         }
         if (kwArgs["checkSentenceAgreement"]){
-            self.checkSentenceAgreement();
+            this.checkSentenceAgreement();
         } else if (kwArgs["otherWord"]){
             var otherWord = kwArgs["otherWord"];
-            if (self.agreesWith(otherWord)){
-                self.agree(self.agreesWith(otherWord));
+            if (this.agreesWith(otherWord)){
+                this.agree(self.agreesWith(otherWord));
             }
         }
         if (kwArgs["showTooltip"]){
-            self.showTooltip();
+            this.showTooltip();
         }
         if (kwArgs["showKey"]){
-            currentPassage.setAgreementKey(self.getSelectedInfl().get("Part of Speech"));
-        }
-    }
-    
-    /*Uses the XML parser with the XML document from the API to generate the array of entries.*/
-    updateWordDefintion(origin, doc){
-        switch (origin) {
-            case ALPHEIOS_PERL_URL:
-                //If the API responded with no entry
-                var definition = new Definition(origin);
-                if (doc.getElementsByTagName("entry").length == 0){
-                    var entry = {meaning: "Unknown meaning!"};
-                    var infl = new Map();
-                    infl.set("Error", "Word not recognized!");
-                    entry.inflections = [infl];
-                    definition.entries.push(entry);
-                }
-
-                //If there is an entry in the API response
-                for (const entry of doc.getElementsByTagName("entry")){
-                    try {
-                        var meaning = entry.getElementsByTagName("mean")[0].textContent;
-                    } catch (TypeError) {
-                        var meaning = "Unknown meaning!";
-                    }
-                    try {
-                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
-                        if (frequency == null){
-                            var frequency = "0"; //"constrictam" yeilds <freq>Pliny</freq>, which is probably uncommon.
-                        }
-                    } catch (TypeError) {
-                        console.log("Couldn't get frequency data for the following entry:");
-                        console.log(entry);
-                        var frequency = "999";
-                    }
-                    var convertedEntry = {meaning: meaning, frequency: frequency};
-                    convertedEntry.inflections = [];
-                    var capitalize = function(s){return s[0].toUpperCase() + s.slice(1);}
-                    for (const infl of entry.getElementsByTagName("infl")){
-                        var inflection = new Map;
-                        for (const property of infl.children){
-                            inflection.set(
-                                linguisticTerms[property.tagName] != undefined ? linguisticTerms[property.tagName] : capitalize(property.tagName),
-                                linguisticTerms[property.textContent] != undefined ? linguisticTerms[property.textContent] : capitalize(property.textContent)
-                            ); //Tries to replace terms according to  linguisticTerms if able, otherwise capitalizes the term from the XML and uses that.
-                        }
-                        if (inflection.get("Part of Speech") == "Pronoun"){
-                            inflection.set("Person", this.pronounPerson(meaning));
-                        }
-                        convertedEntry.inflections.push(inflection);
-                    }
-                    definition.entries.push(convertedEntry);
-                }
-                definition.entries = definition.entries.sort(sortByProperty("-frequency"));
-                setCachedDefinition(ALPHEIOS_PERL_URL, this.wordNoPunctuation, definition);
-                this.definition = definition;
-                break;
-        }
-    }
-
-    pronounPerson(meaning){
-        if (meaning == "I, me (PERS); myself (REFLEX);" || meaning == "we (pl.), us;"){
-            return "1st";
-        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);" || meaning == "you (pl.), ye;"){
-            return "2nd";
-        } else {
-            return "3rd";
+            currentPassage.setAgreementKey(this.getSelectedInfl().get("Part of Speech"));
         }
     }
 
