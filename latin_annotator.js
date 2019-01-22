@@ -44,7 +44,7 @@ function sortByProperty(property) {
             return b[property].localeCompare(a[property]);
         } else {
             return a[property].localeCompare(b[property]);
-        }        
+        }
     }
 }
 
@@ -55,7 +55,7 @@ function styledText(text, className) {
     p.innerHTML = text;
     return p;
 }
- 
+
 /*The Passage class creates a passage from raw text when created.
 It contains all word objects of the passage.
 */
@@ -67,9 +67,9 @@ class Passage {
         this.assigningWordID = 0;
         this.words = this.createwords(rawText);
     }
-    
+
     /*Generates Words in the passage by stripping punctuation and running it through the Word's constructor
-    
+
     These Words are stored in this.words, which is a map of words referenced by a numerical ID. These are NOT ordered, since you're supposed to be able to insert words in arbitrary positions.*/
     createwords(rawText){
         rawText = rawText.replace(/\r?\n|\r/g, " \n "); //matches newlines
@@ -100,7 +100,7 @@ class Passage {
             }
         }
     }
-    
+
     setAgreementKey(partOfSpeech) {
             var agreementKey = document.getElementById("agreementKey");
             agreementKey.innerHTML = "";
@@ -169,7 +169,7 @@ class Word {
             this.HTMLelement.appendChild(document.createTextNode(wordString));
         }
         this.HTMLelement.id = this.wordID;
-        
+
         var self = this;
         this.HTMLelement.addEventListener("click", function(){
             self.clicked();
@@ -184,7 +184,7 @@ class Word {
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
         document.getElementById("wordElementContainer").appendChild(document.createTextNode(" "));
     }
-    
+
     mousedover(){
         if (this.definition == null){
             //this.getWordDefinitions(false, false, null, true)
@@ -193,7 +193,7 @@ class Word {
             this.showTooltip();
         }
     }
-    
+
     showTooltip(){
         this.hideTooltip();
         var tooltip = document.createElement("div");
@@ -201,23 +201,23 @@ class Word {
         var wordMeaning = this.getSelectedEntry().meaning.replace(" ", "\u00A0");
         var meaning = document.createTextNode(wordMeaning);
         tooltip.appendChild(meaning);
-        
+
         var entry = this.definition.selectedEntry;
         this.definition.generateTablesByEntry(entry, this, false);
         var infl = this.definition.selectedInfl;
         var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
         tooltip.appendChild(inflTable);
-        
+
         this.HTMLelement.appendChild(tooltip);
     }
-    
+
     hideTooltip(){
         if (document.getElementById("tooltip")){
             var tooltip = document.getElementById("tooltip");
             tooltip.remove();
         }
     }
-    
+
     //When the word's wordElement gets clicked, this runs.
     clicked(){
         currentPassage.clearHighlights();
@@ -236,7 +236,7 @@ class Word {
         var definitionContainer = document.getElementById("definitionContainer");
         definitionContainer.innerHTML = "";
         for (var e = 0 ; e < this.definition.entries.length; e++){
-            
+
             //start making the definition box where all the inflections will go inside
             var defElement = document.createElement("div");
             defElement.className = "definition";
@@ -247,13 +247,13 @@ class Word {
             defElement.appendChild(meaningElement);
 
             var inflectionContainer = this.definition.generateTablesByEntry(e, this, true);
-            
+
             defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
         }
         this.scrollToSelectedDef();
     }
-    
+
     scrollToSelectedDef(){
         var entry = this.definition.selectedEntry;
         var infl = this.definition.selectedInfl;
@@ -261,7 +261,7 @@ class Word {
         var defDiv = table.parentElement.parentElement;
         defDiv.parentElement.scrollTop = defDiv.offsetTop - 10;
     }
-    
+
     //Gets word definitions as an XML document which is passed to updateWordDefinition()
     getWordDefinitions(kwArgs){
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
@@ -272,15 +272,15 @@ class Word {
             getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching.bind(this), kwArgs);
         }
     }
-    
+
     updateWordDefintion(definition, kwArgs){
         this.definition = definition;
         this.afterFetching(kwArgs);
     }
-    
+
     /*There are a bunch of things that the Word can do after a definition is acquired
     They are all in here.
-    
+
     Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
     afterFetching(kwArgs){
         if (kwArgs["updateView"]){
@@ -520,7 +520,7 @@ class Word {
         var entry = this.definition.entries[entryNumber];
         return entry;
     }
-    
+
     getSelectedInfl(){
         var entryNumber = this.definition.selectedEntry;
         var inflNumber = this.definition.selectedInfl;
@@ -532,9 +532,9 @@ class Word {
 }
 
 class Definition {
-    
+
     /*The most important part of Definition is that it contains all the possible dictionary entries and inflections for a word, stored in this.entries()
-    
+
     The structure of this.entries is [{meaning="", inflections=[{"property":"value"}]}]*/
     constructor(origin_url){
         this.origin = origin_url;
@@ -543,18 +543,18 @@ class Definition {
         this.entries = [];
         this.inflTables = [];
     }
-    
+
     generateTablesByEntry(e, wordObj, returnContainer){
         var setInflection = function(element){
                 element.setAttribute("entryNumber", e);
                 element.setAttribute("inflectionNumber", i);
             };
-        
+
         if (returnContainer){
             var inflectionContainer = document.createElement("div");
             inflectionContainer.className = "inflections";
         }
-        
+
         var entry = this.entries[e];
         for (var i = 0; i < entry.inflections.length; i++){
             var inflection = entry.inflections[i];
@@ -577,11 +577,11 @@ class Definition {
             setInflection(table);
             table.id = "inflTable " + e + " " + i;
             table.classList.add("inflTable");
-            
+
             if(e == this.selectedEntry && i == this.selectedInfl){
                 table.classList.add("currentInfl");
             }
-            
+
             //Things to do when you click an inflTable
             var self = this;
             table.addEventListener("click", function(event){
@@ -606,7 +606,7 @@ class Definition {
                 wordObj.HTMLelement.classList.add("selected");
                 wordObj.checkSentenceAgreement();
             });
-            
+
             if (returnContainer){
                 inflectionContainer.appendChild(table);
             }
