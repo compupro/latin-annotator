@@ -1,3 +1,22 @@
+//Referenced when api ling terms are replaced by human readable ones
+const linguisticTerms = {
+    "pofs":"Part of Speech",
+    "decl":"Declension",
+    "num":"Number",
+    "gend":"Gender",
+    "comp":"Degree of Comparison",
+    "voice":"Voice",
+    "pers":"Person",
+    "sort":"Cardinality",
+    "var":"Variant",
+    "conj":"Conjugation",
+    "6th":"Irregular",
+    "7th":"Irregular",
+    "9th":"Irregular",
+    "common":"Masculine/Feminine",
+    "all":"Masculine/Feminine/Neuter"
+    };
+
 /*Cache-based provider*/
 
 //Keys in definitionCache are all concatenated origin+wordNoPunctuation

@@ -1,25 +1,6 @@
 //Put API endpoint URLs here as constants
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
 
-//Referenced when api ling terms are replaced by human readable ones
-const linguisticTerms = {
-    "pofs":"Part of Speech",
-    "decl":"Declension",
-    "num":"Number",
-    "gend":"Gender",
-    "comp":"Degree of Comparison",
-    "voice":"Voice",
-    "pers":"Person",
-    "sort":"Cardinality",
-    "var":"Variant",
-    "conj":"Conjugation",
-    "6th":"Irregular",
-    "7th":"Irregular",
-    "9th":"Irregular",
-    "common":"Masculine/Feminine",
-    "all":"Masculine/Feminine/Neuter"
-    };
-
 /*Utility functions*/
 function searchByProperty(array, property, val) {
     for (const elem of array) {
@@ -261,7 +242,6 @@ class Word {
         defDiv.parentElement.scrollTop = defDiv.offsetTop - 10;
     }
 
-    //Gets word definitions as an XML document which is passed to updateWordDefinition()
     getWordDefinitions(kwArgs){
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
         if (cacheDef != null){
