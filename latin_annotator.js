@@ -1,25 +1,6 @@
 //Put API endpoint URLs here as constants
 const ALPHEIOS_PERL_URL = "https://alpheios.net/perl/latin?word=";
 
-//Referenced when api ling terms are replaced by human readable ones
-const linguisticTerms = {
-    "pofs":"Part of Speech",
-    "decl":"Declension",
-    "num":"Number",
-    "gend":"Gender",
-    "comp":"Degree of Comparison",
-    "voice":"Voice",
-    "pers":"Person",
-    "sort":"Cardinality",
-    "var":"Variant",
-    "conj":"Conjugation",
-    "6th":"Irregular",
-    "7th":"Irregular",
-    "9th":"Irregular",
-    "common":"Masculine/Feminine",
-    "all":"Masculine/Feminine/Neuter"
-    };
-
 /*Utility functions*/
 function searchByProperty(array, property, val) {
     for (const elem of array) {
@@ -44,7 +25,7 @@ function sortByProperty(property) {
             return b[property].localeCompare(a[property]);
         } else {
             return a[property].localeCompare(b[property]);
-        }        
+        }
     }
 }
 
@@ -55,7 +36,7 @@ function styledText(text, className) {
     p.innerHTML = text;
     return p;
 }
- 
+
 /*The Passage class creates a passage from raw text when created.
 It contains all word objects of the passage.
 */
@@ -67,9 +48,9 @@ class Passage {
         this.assigningWordID = 0;
         this.words = this.createwords(rawText);
     }
-    
+
     /*Generates Words in the passage by stripping punctuation and running it through the Word's constructor
-    
+
     These Words are stored in this.words, which is a map of words referenced by a numerical ID. These are NOT ordered, since you're supposed to be able to insert words in arbitrary positions.*/
     createwords(rawText){
         rawText = rawText.replace(/\r?\n|\r/g, " \n "); //matches newlines
@@ -100,7 +81,7 @@ class Passage {
             }
         }
     }
-    
+
     setAgreementKey(partOfSpeech) {
             var agreementKey = document.getElementById("agreementKey");
             agreementKey.innerHTML = "";
@@ -169,7 +150,7 @@ class Word {
             this.HTMLelement.appendChild(document.createTextNode(wordString));
         }
         this.HTMLelement.id = this.wordID;
-        
+
         var self = this;
         this.HTMLelement.addEventListener("click", function(){
             self.clicked();
@@ -182,17 +163,17 @@ class Word {
         });
 
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
+        document.getElementById("wordElementContainer").appendChild(document.createTextNode(" "));
     }
-    
+
     mousedover(){
         if (this.definition == null){
-            //this.getWordDefinitions(false, false, null, true)
             this.getWordDefinitions({"showTooltip":true})
         } else {
             this.showTooltip();
         }
     }
-    
+
     showTooltip(){
         this.hideTooltip();
         var tooltip = document.createElement("div");
@@ -200,23 +181,23 @@ class Word {
         var wordMeaning = this.getSelectedEntry().meaning.replace(" ", "\u00A0");
         var meaning = document.createTextNode(wordMeaning);
         tooltip.appendChild(meaning);
-        
+
         var entry = this.definition.selectedEntry;
         this.definition.generateTablesByEntry(entry, this, false);
         var infl = this.definition.selectedInfl;
         var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
         tooltip.appendChild(inflTable);
-        
+
         this.HTMLelement.appendChild(tooltip);
     }
-    
+
     hideTooltip(){
         if (document.getElementById("tooltip")){
             var tooltip = document.getElementById("tooltip");
             tooltip.remove();
         }
     }
-    
+
     //When the word's wordElement gets clicked, this runs.
     clicked(){
         currentPassage.clearHighlights();
@@ -235,7 +216,7 @@ class Word {
         var definitionContainer = document.getElementById("definitionContainer");
         definitionContainer.innerHTML = "";
         for (var e = 0 ; e < this.definition.entries.length; e++){
-            
+
             //start making the definition box where all the inflections will go inside
             var defElement = document.createElement("div");
             defElement.className = "definition";
@@ -246,13 +227,13 @@ class Word {
             defElement.appendChild(meaningElement);
 
             var inflectionContainer = this.definition.generateTablesByEntry(e, this, true);
-            
+
             defElement.appendChild(inflectionContainer);
             definitionContainer.appendChild(defElement);
         }
         this.scrollToSelectedDef();
     }
-    
+
     scrollToSelectedDef(){
         var entry = this.definition.selectedEntry;
         var infl = this.definition.selectedInfl;
@@ -261,119 +242,43 @@ class Word {
         defDiv.parentElement.scrollTop = defDiv.offsetTop - 10;
     }
 
-    //Gets word definitions as an XML document which is passed to updateWordDefinition()
     getWordDefinitions(kwArgs){
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
         if (cacheDef != null){
-            console.log("got something from cache");
             this.definition = cacheDef;
-            this.afterFetching(this, kwArgs);
+            this.afterFetching(definition, kwArgs);
         } else {
-            var x = new XMLHttpRequest();
-            x.open("GET", ALPHEIOS_PERL_URL+this.wordNoPunctuation, true);
-
-            var self = this;
-            x.onreadystatechange = function () {
-                if (x.readyState == 4 && x.status == 201) {
-                    var doc = x.response;
-                    var parser = new DOMParser();
-                    doc = parser.parseFromString(doc, "text/xml");
-                    self.updateWordDefintion(ALPHEIOS_PERL_URL, doc);
-                    self.afterFetching(self, kwArgs);
-                }
-            }
-            x.send(null);
+            getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching.bind(this), kwArgs);
         }
     }
-    
+
+    updateWordDefintion(definition, kwArgs){
+        this.definition = definition;
+        this.afterFetching(definition, kwArgs);
+    }
+
     /*There are a bunch of things that the Word can do after a definition is acquired
     They are all in here.
-    You have to provide a self argument because it gets used in an async function
-    
+
     Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
-    afterFetching(self, kwArgs){
+    afterFetching(definition, kwArgs){
+        this.definition = definition;
         if (kwArgs["updateView"]){
-            self.updateDefinitionView();
+            this.updateDefinitionView();
         }
         if (kwArgs["checkSentenceAgreement"]){
-            self.checkSentenceAgreement();
+            this.checkSentenceAgreement();
         } else if (kwArgs["otherWord"]){
             var otherWord = kwArgs["otherWord"];
-            if (self.agreesWith(otherWord)){
-                self.agree(self.agreesWith(otherWord));
+            if (this.agreesWith(otherWord)){
+                this.agree(this.agreesWith(otherWord));
             }
         }
         if (kwArgs["showTooltip"]){
-            self.showTooltip();
+            this.showTooltip();
         }
         if (kwArgs["showKey"]){
-            currentPassage.setAgreementKey(self.getSelectedInfl().get("Part of Speech"));
-        }
-    }
-    
-    /*Uses the XML parser with the XML document from the API to generate the array of entries.*/
-    updateWordDefintion(origin, doc){
-        switch (origin) {
-            case ALPHEIOS_PERL_URL:
-                //If the API responded with no entry
-                var definition = new Definition(origin);
-                if (doc.getElementsByTagName("entry").length == 0){
-                    var entry = {meaning: "Unknown meaning!"};
-                    var infl = new Map();
-                    infl.set("Error", "Word not recognized!");
-                    entry.inflections = [infl];
-                    definition.entries.push(entry);
-                }
-
-                //If there is an entry in the API response
-                for (const entry of doc.getElementsByTagName("entry")){
-                    try {
-                        var meaning = entry.getElementsByTagName("mean")[0].textContent;
-                    } catch (TypeError) {
-                        var meaning = "Unknown meaning!";
-                    }
-                    try {
-                        var frequency = entry.getElementsByTagName("freq")[0].getAttribute("order");
-                        if (frequency == null){
-                            var frequency = "0"; //"constrictam" yeilds <freq>Pliny</freq>, which is probably uncommon.
-                        }
-                    } catch (TypeError) {
-                        console.log("Couldn't get frequency data for the following entry:");
-                        console.log(entry);
-                        var frequency = "999";
-                    }
-                    var convertedEntry = {meaning: meaning, frequency: frequency};
-                    convertedEntry.inflections = [];
-                    var capitalize = function(s){return s[0].toUpperCase() + s.slice(1);}
-                    for (const infl of entry.getElementsByTagName("infl")){
-                        var inflection = new Map;
-                        for (const property of infl.children){
-                            inflection.set(
-                                linguisticTerms[property.tagName] != undefined ? linguisticTerms[property.tagName] : capitalize(property.tagName),
-                                linguisticTerms[property.textContent] != undefined ? linguisticTerms[property.textContent] : capitalize(property.textContent)
-                            ); //Tries to replace terms according to  linguisticTerms if able, otherwise capitalizes the term from the XML and uses that.
-                        }
-                        if (inflection.get("Part of Speech") == "Pronoun"){
-                            inflection.set("Person", this.pronounPerson(meaning));
-                        }
-                        convertedEntry.inflections.push(inflection);
-                    }
-                    definition.entries.push(convertedEntry);
-                }
-                definition.entries = definition.entries.sort(sortByProperty("-frequency"));
-                setCachedDefinition(ALPHEIOS_PERL_URL, this.wordNoPunctuation, definition);
-                this.definition = definition;
-                break;
-        }
-    }
-
-    pronounPerson(meaning){
-        if (meaning == "I, me (PERS); myself (REFLEX);" || meaning == "we (pl.), us;"){
-            return "1st";
-        } else if (meaning == "you (sing.); thou/thine/thee/thy (PERS); yourself/thyself (REFLEX);" || meaning == "you (pl.), ye;"){
-            return "2nd";
-        } else {
-            return "3rd";
+            currentPassage.setAgreementKey(this.getSelectedInfl().get("Part of Speech"));
         }
     }
 
@@ -595,7 +500,7 @@ class Word {
         var entry = this.definition.entries[entryNumber];
         return entry;
     }
-    
+
     getSelectedInfl(){
         var entryNumber = this.definition.selectedEntry;
         var inflNumber = this.definition.selectedInfl;
@@ -607,9 +512,9 @@ class Word {
 }
 
 class Definition {
-    
+
     /*The most important part of Definition is that it contains all the possible dictionary entries and inflections for a word, stored in this.entries()
-    
+
     The structure of this.entries is [{meaning="", inflections=[{"property":"value"}]}]*/
     constructor(origin_url){
         this.origin = origin_url;
@@ -618,18 +523,18 @@ class Definition {
         this.entries = [];
         this.inflTables = [];
     }
-    
+
     generateTablesByEntry(e, wordObj, returnContainer){
         var setInflection = function(element){
                 element.setAttribute("entryNumber", e);
                 element.setAttribute("inflectionNumber", i);
             };
-        
+
         if (returnContainer){
             var inflectionContainer = document.createElement("div");
             inflectionContainer.className = "inflections";
         }
-        
+
         var entry = this.entries[e];
         for (var i = 0; i < entry.inflections.length; i++){
             var inflection = entry.inflections[i];
@@ -652,11 +557,11 @@ class Definition {
             setInflection(table);
             table.id = "inflTable " + e + " " + i;
             table.classList.add("inflTable");
-            
+
             if(e == this.selectedEntry && i == this.selectedInfl){
                 table.classList.add("currentInfl");
             }
-            
+
             //Things to do when you click an inflTable
             var self = this;
             table.addEventListener("click", function(event){
@@ -681,7 +586,7 @@ class Definition {
                 wordObj.HTMLelement.classList.add("selected");
                 wordObj.checkSentenceAgreement();
             });
-            
+
             if (returnContainer){
                 inflectionContainer.appendChild(table);
             }
