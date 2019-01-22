@@ -23,8 +23,8 @@ function getAPIDoc(origin, word, callback, callbackArgs){
     if (origin == ALPHEIOS_PERL_URL){
         request_url = origin+word;
     }
-    
-    var x = new XMLHttpRequest();    
+
+    var x = new XMLHttpRequest();
     x.open("GET", request_url, true);
     x.onreadystatechange = function () {
         if (x.readyState == 4 && x.status == 201) {
