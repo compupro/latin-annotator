@@ -187,7 +187,6 @@ class Word {
 
     mousedover(){
         if (this.definition == null){
-            //this.getWordDefinitions(false, false, null, true)
             this.getWordDefinitions({"showTooltip":true})
         } else {
             this.showTooltip();
@@ -267,7 +266,7 @@ class Word {
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
         if (cacheDef != null){
             this.definition = cacheDef;
-            this.afterFetching(kwArgs);
+            this.afterFetching(definition, kwArgs);
         } else {
             getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching.bind(this), kwArgs);
         }
@@ -275,14 +274,15 @@ class Word {
 
     updateWordDefintion(definition, kwArgs){
         this.definition = definition;
-        this.afterFetching(kwArgs);
+        this.afterFetching(definition, kwArgs);
     }
 
     /*There are a bunch of things that the Word can do after a definition is acquired
     They are all in here.
 
     Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
-    afterFetching(kwArgs){
+    afterFetching(definition, kwArgs){
+        this.definition = definition;
         if (kwArgs["updateView"]){
             this.updateDefinitionView();
         }
