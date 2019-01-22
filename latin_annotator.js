@@ -267,9 +267,9 @@ class Word {
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
         if (cacheDef != null){
             this.definition = cacheDef;
-            this.afterFetching(this, kwArgs);
+            this.afterFetching(kwArgs);
         } else {
-            getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching, kwArgs);
+            getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching.bind(this), kwArgs);
         }
     }
     
@@ -280,7 +280,6 @@ class Word {
     
     /*There are a bunch of things that the Word can do after a definition is acquired
     They are all in here.
-    You have to provide a self argument because it gets used in an async function
     
     Keyword arguments are: updateView, checkSentenceAgreement, otherWord, showTooltip*/
     afterFetching(kwArgs){
@@ -292,7 +291,7 @@ class Word {
         } else if (kwArgs["otherWord"]){
             var otherWord = kwArgs["otherWord"];
             if (this.agreesWith(otherWord)){
-                this.agree(self.agreesWith(otherWord));
+                this.agree(this.agreesWith(otherWord));
             }
         }
         if (kwArgs["showTooltip"]){
