@@ -186,6 +186,7 @@ class Word {
         this.definition.generateTablesByEntry(entry, this, false);
         var infl = this.definition.selectedInfl;
         var inflTable = searchByProperty(currentPassage.words.get(this.wordID).definition.inflTables, 'id', 'inflTable ' + entry + ' ' + infl);
+        inflTable.id = ""
         tooltip.appendChild(inflTable);
 
         this.HTMLelement.appendChild(tooltip);
