@@ -228,7 +228,7 @@ class Word {
             meaningElement.className = "meaning";
             meaningElement.appendChild(document.createTextNode(this.definition.entries[e].meaning));
             defElement.appendChild(meaningElement);
-
+            
             var inflectionContainer = this.definition.generateTablesByEntry(e, this, true);
 
             defElement.appendChild(inflectionContainer);
@@ -249,6 +249,7 @@ class Word {
         var cacheDef = getCachedDefinition(originSetting, this.wordNoPunctuation);
         if (cacheDef != null){
             this.definition = cacheDef;
+            definition = this.definition;
             this.afterFetching(definition, kwArgs);
         } else {
             getAPIDoc(originSetting, this.wordNoPunctuation, this.afterFetching.bind(this), kwArgs);
