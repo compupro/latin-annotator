@@ -150,6 +150,8 @@ class Word {
             this.HTMLelement.appendChild(document.createTextNode(wordString));
         }
         this.HTMLelement.id = this.wordID;
+        
+        this.hover = false;
 
         var self = this;
         this.HTMLelement.addEventListener("click", function(){
@@ -160,6 +162,7 @@ class Word {
         });
         this.HTMLelement.addEventListener("mouseout", function(){
             self.hideTooltip();
+            self.hover = false;
         });
 
         document.getElementById("wordElementContainer").appendChild(this.HTMLelement);
@@ -167,6 +170,7 @@ class Word {
     }
 
     mousedover(){
+        this.hover = true;
         if (this.definition == null){
             this.getWordDefinitions({"showTooltip":true})
         } else {
@@ -175,7 +179,10 @@ class Word {
     }
 
     showTooltip(){
-        this.hideTooltip();
+        this.hideTooltip()
+        if (!this.hover) {
+            return;
+        }
         var tooltip = document.createElement("div");
         tooltip.id = "tooltip";
         var wordMeaning = this.getSelectedEntry().meaning.replace(" ", "\u00A0");
