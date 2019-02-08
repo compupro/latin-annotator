@@ -35,4 +35,6 @@ function dragElement(elem) {
     }
 }
 
+dummyElem = document.getElementById("bottomDummy");
+dummyElem.style.height = document.getElementById("definitionContainer").clientHeight + "px";
 dragElement(document.getElementById("definitionContainer"));
