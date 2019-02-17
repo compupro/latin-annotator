@@ -8,6 +8,11 @@
     <body>
         <textarea id="input"></textarea>
         <input type="button" onclick="processInput();" value="Go!"></input>
+        <div class="scaifeGrabber">
+            Enter a Perseus Scaife URN citation to fetch text:<br />
+            <input type="text" id="scaifeSelector" value="urn:cts:latinLit:phi0448.phi001.perseus-lat2:4.31-4.33"></input>
+            <input type="button" onclick="getScaife();" value="Get text with URN"></input>
+        </div>
         <hr>
         <div id="wordElementContainer"></div>
         <div id="bottomDummy"></div>
@@ -17,6 +22,7 @@
         </div>
         <div id="agreementKey"></div>
         <script type="text/javascript" src="ui_helper.js"></script>
+        <script type="text/javascript" src="scaife_grabber.js"></script>
         <!--TEMPORARY TEST ROUTINE SCRIPT-->
         <script type="text/javascript" src="tests.js"></script>
     </body>
