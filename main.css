@@ -115,13 +115,31 @@ body {
     white-space: pre;
 }
 
-#agreementKey {
+#keyContainer {
     position: fixed;
     z-index: 1;
-    max-width: 250px;
-    box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
     right: 0;
     top: 25%;
+    display: flex;
+}
+
+#agreementKey {
+    max-width: 250px;
+    box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
     background-color: white;
     padding: 0 10px 0 10px;
+    z-index: 2;
+}
+
+#keyHider {
+    width: 8px;
+    height: remainder;
+    box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
+    background-color: rgb(245, 245, 245);
+    position: relative;
+    cursor: pointer;
+}
+
+#keyHider:hover {
+    background-color: rgb(200, 200, 200) !important;
 }

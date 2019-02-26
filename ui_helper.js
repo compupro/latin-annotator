@@ -1,7 +1,7 @@
 // Make the DIV element draggable:
 function dragElement(elem) {
     var pos1 = 0, pos2 = 0;
-    resizerBar = document.getElementById("resizer");
+    resizerBar = document.getElementById("bottomResizer");
     resizerBar.onmousedown = dragMouseDown;
 
     function dragMouseDown(e) {
@@ -38,3 +38,25 @@ function dragElement(elem) {
 dummyElem = document.getElementById("bottomDummy");
 dummyElem.style.height = document.getElementById("definitionContainer").clientHeight + "px";
 dragElement(document.getElementById("definitionContainer"));
+
+function toggleKey() {
+    if (keyShown) {
+        keyShown = false;
+        key = document.getElementById("agreementKey");
+        key.style.visibility = "hidden";
+        document.getElementById("keyHider").style.position = "absolute";
+        document.getElementById("keyHider").style.right = "0";
+        document.getElementById("keyHider").style.height = "200px";
+        document.getElementById("keyHider").style.width = "20px";
+    } else {
+        keyShown = true;
+        key.style.visibility = "";
+        document.getElementById("keyHider").style.position = "";
+        document.getElementById("keyHider").style.right = "";
+        document.getElementById("keyHider").style.height = "";
+        document.getElementById("keyHider").style.width = "";
+    }
+}
+
+var keyShown = true;
+document.getElementById("keyHider").addEventListener("click", toggleKey);
