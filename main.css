@@ -144,6 +144,10 @@ body {
     background-color: rgb(200, 200, 200) !important;
 }
 
+.keyHidden {
+    display: none;
+}
+
 .hiderHidden {
     position: absolute !important;
     right: 0;

@@ -46,13 +46,13 @@ function toggleKey() {
     if (keyShown) {
         keyHiderHeight = keyHider.clientHeight;
         keyShown = false;
-        key.style.visibility = "hidden";
+        key.classList.add("keyHidden");
         keyHider.classList.add("hiderHidden");
         keyHider.style.height = keyHiderHeight;
     } else {
         keyShown = true;
         keyHider.classList.remove("hiderHidden");
-        key.style.visibility = "";
+        key.classList.remove("keyHidden");
     }
 }
 
