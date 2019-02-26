@@ -147,5 +147,5 @@ body {
 .hiderHidden {
     position: absolute !important;
     right: 0;
-    width: 15px;
+    width: 15px !important;
 }
