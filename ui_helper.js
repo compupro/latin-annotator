@@ -39,22 +39,20 @@ dummyElem = document.getElementById("bottomDummy");
 dummyElem.style.height = document.getElementById("definitionContainer").clientHeight + "px";
 dragElement(document.getElementById("definitionContainer"));
 
+//Section for making the key toggle/hider work
 function toggleKey() {
+    var keyHider = document.getElementById("keyHider");
+    var key = document.getElementById("agreementKey");
     if (keyShown) {
+        keyHiderHeight = keyHider.clientHeight;
         keyShown = false;
-        key = document.getElementById("agreementKey");
         key.style.visibility = "hidden";
-        document.getElementById("keyHider").style.position = "absolute";
-        document.getElementById("keyHider").style.right = "0";
-        document.getElementById("keyHider").style.height = "200px";
-        document.getElementById("keyHider").style.width = "20px";
+        keyHider.classList.add("hiderHidden");
+        keyHider.style.height = keyHiderHeight;
     } else {
         keyShown = true;
+        keyHider.classList.remove("hiderHidden");
         key.style.visibility = "";
-        document.getElementById("keyHider").style.position = "";
-        document.getElementById("keyHider").style.right = "";
-        document.getElementById("keyHider").style.height = "";
-        document.getElementById("keyHider").style.width = "";
     }
 }
 
