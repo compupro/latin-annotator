@@ -132,12 +132,15 @@ body {
 }
 
 #keyHider {
-    width: 8px;
+    width: 10px;
     height: remainder;
     box-shadow: 0 1px 3px 1px rgba(60,64,67,.32);
     background-color: rgb(235, 235, 235);
     position: relative;
     cursor: pointer;
+    font-size: 10px;
+    writing-mode: vertical-rl;
+    text-align: center;
 }
 
 #keyHider:hover {
