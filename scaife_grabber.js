@@ -13,9 +13,16 @@ function getScaife() {
             var parser = new DOMParser();
             doc = parser.parseFromString(doc, "text/xml");
             
+            var text = "";
+            
             var paragraphs = Array.from(doc.getElementsByTagName('p'));
             paragraphs = paragraphs.map(y => y.textContent);
-            var text = paragraphs.join('\n\n');
+            text = text + paragraphs.join('\n\n');
+            
+            //For some poetry, like the Aeneid, <p> is replaced by <l>
+            var lines = Array.from(doc.getElementsByTagName('l'));
+            lines = lines.map(y => y.textContent);
+            var text = text + lines.join('\n');
             
             document.getElementById('input').value = text;
         } else {
